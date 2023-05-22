@@ -33,17 +33,19 @@ class _MyAppState extends State<MyApp> {
       showPerformanceOverlay: true,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SmoothListView.adaptiveBuilder(
+        body: SmoothListView.adaptive(
           controller: controller,
           smoothScroll: smooth,
           duration: const Duration(milliseconds: 400),
-          itemCount: 50,
-          itemBuilder: (ctx, idx) {
-            return Container(
-              height: 200,
-              color: colorList[idx % colorList.length],
-            );
-          },
+          children: List.generate(
+            50,
+            (idx) {
+              return Container(
+                height: 200,
+                color: colorList[idx % colorList.length],
+              );
+            },
+          ),
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(smooth ? Icons.toggle_on : Icons.toggle_off),

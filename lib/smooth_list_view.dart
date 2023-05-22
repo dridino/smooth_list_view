@@ -345,7 +345,7 @@ class _SmoothListViewBuilder extends StatefulWidget {
 
 class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
   double targetPos = 0.0;
-  bool _shouldAnimate = true;
+  bool _shouldAnimate = false;
 
   void updatePos(double v) {
     setState(() {
@@ -369,19 +369,17 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
     }
     return Listener(
       onPointerSignal: (PointerSignalEvent event) {
+        if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
+          setState(() {
+            _shouldAnimate = false;
+          });
+        }
         if (event is PointerScrollEvent) {
           if (widget.smoothScroll) {
-            if (event.kind == PointerDeviceKind.mouse) {
-              setState(() {
-                _shouldAnimate = true;
-              });
-            } else {
-              setState(() {
-                _shouldAnimate = false;
-              });
-            }
+            setState(() {
+              _shouldAnimate = true;
+            });
           }
-          debugPrint(event.kind.toString());
           if (_shouldAnimate) {
             updatePos(widget.scrollDirection == Axis.vertical
                 ? event.scrollDelta.dy
@@ -474,7 +472,7 @@ class _SmoothListViewItems extends StatefulWidget {
 
 class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
   double targetPos = 0.0;
-  bool _shouldAnimate = true;
+  bool _shouldAnimate = false;
 
   void updatePos(double v) {
     setState(() {
@@ -498,17 +496,16 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
     }
     return Listener(
       onPointerSignal: (PointerSignalEvent event) {
+        if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
+          setState(() {
+            _shouldAnimate = false;
+          });
+        }
         if (event is PointerScrollEvent) {
           if (widget.smoothScroll) {
-            if (event.kind == PointerDeviceKind.mouse) {
-              setState(() {
-                _shouldAnimate = true;
-              });
-            } else {
-              setState(() {
-                _shouldAnimate = false;
-              });
-            }
+            setState(() {
+              _shouldAnimate = true;
+            });
           }
           if (_shouldAnimate) {
             updatePos(widget.scrollDirection == Axis.vertical
