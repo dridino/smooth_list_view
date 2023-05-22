@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
           itemCount: 50,
           itemBuilder: (ctx, idx) {
             return Container(
-              height: 100,
+              height: 200,
               width: 200,
               color: colorList[idx % colorList.length],
             );
