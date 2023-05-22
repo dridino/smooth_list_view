@@ -381,6 +381,7 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
               });
             }
           }
+          debugPrint(event.kind.toString());
           if (_shouldAnimate) {
             updatePos(widget.scrollDirection == Axis.vertical
                 ? event.scrollDelta.dy
@@ -402,7 +403,7 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
         itemExtent: widget.itemExtent,
         keyboardDismissBehavior: widget.keyboardDismissBehavior,
         padding: widget.padding,
-        physics: widget.smoothScroll && _shouldAnimate
+        physics: (widget.smoothScroll && _shouldAnimate)
             ? const NeverScrollableScrollPhysics()
             : widget.physics,
         primary: widget.primary,
