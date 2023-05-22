@@ -336,7 +336,7 @@ class _SmoothListViewBuilder extends StatefulWidget {
     this.cacheExtent,
     this.semanticChildCount,
     this.restorationId,
-    this.physics = const BouncingScrollPhysics(),
+    this.physics,
   }) : super(key: key);
 
   @override
@@ -463,7 +463,7 @@ class _SmoothListViewItems extends StatefulWidget {
     this.cacheExtent,
     this.semanticChildCount,
     this.restorationId,
-    this.physics = const BouncingScrollPhysics(),
+    this.physics,
   }) : super(key: key);
 
   @override

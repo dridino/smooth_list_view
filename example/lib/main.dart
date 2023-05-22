@@ -17,8 +17,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool smooth = false;
 
-  /// We define a controller here to keep the same scroll offset while
-  /// switching between the classic version and the animated version
+  // We define a controller here to keep the same scroll offset while
+  // switching between the classic version and the animated version
   late ScrollController controller;
 
   @override
@@ -33,19 +33,17 @@ class _MyAppState extends State<MyApp> {
       showPerformanceOverlay: true,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SmoothListView.adaptive(
+        body: SmoothListView.adaptiveBuilder(
           controller: controller,
           smoothScroll: smooth,
           duration: const Duration(milliseconds: 400),
-          children: List.generate(
-            50,
-            (idx) {
-              return Container(
-                height: 200,
-                color: colorList[idx % colorList.length],
-              );
-            },
-          ),
+          itemCount: 50,
+          itemBuilder: (ctx, idx) {
+            return Container(
+              height: 200,
+              color: colorList[idx % colorList.length],
+            );
+          },
         ),
         floatingActionButton: FloatingActionButton(
           child: Icon(smooth ? Icons.toggle_on : Icons.toggle_off),
