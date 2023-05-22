@@ -94,7 +94,7 @@ class SmoothListView extends StatelessWidget {
   /// the animation.
   static Widget builder({
     Key? key,
-    required NullableIndexedWidgetBuilder itemBuilder,
+    required IndexedWidgetBuilder itemBuilder,
     required Duration duration,
     Axis scrollDirection = Axis.vertical,
     bool reverse = false,
@@ -160,7 +160,7 @@ class SmoothListView extends StatelessWidget {
   /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
   static Widget adaptiveBuilder({
     Key? key,
-    required NullableIndexedWidgetBuilder itemBuilder,
+    required IndexedWidgetBuilder itemBuilder,
     Duration duration = const Duration(milliseconds: 100),
     Axis scrollDirection = Axis.vertical,
     bool reverse = false,
@@ -285,7 +285,7 @@ class SmoothListView extends StatelessWidget {
   }
 }
 
-final class _SmoothListViewBuilder extends StatefulWidget {
+class _SmoothListViewBuilder extends StatefulWidget {
   final Axis scrollDirection;
   final bool reverse;
   final ScrollController controller;
@@ -294,7 +294,7 @@ final class _SmoothListViewBuilder extends StatefulWidget {
   final EdgeInsetsGeometry? padding;
   final double? itemExtent;
   final Widget? prototypeItem;
-  final NullableIndexedWidgetBuilder itemBuilder;
+  final IndexedWidgetBuilder itemBuilder;
   final ChildIndexGetter? findChildIndexCallback;
   final int? itemCount;
   final bool addAutomaticKeepAlives;
@@ -417,7 +417,7 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
   }
 }
 
-final class _SmoothListViewItems extends StatefulWidget {
+class _SmoothListViewItems extends StatefulWidget {
   final Axis scrollDirection;
   final bool reverse;
   final ScrollController controller;
