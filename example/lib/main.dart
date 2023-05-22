@@ -28,6 +28,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       showPerformanceOverlay: true,
@@ -36,11 +42,13 @@ class _MyAppState extends State<MyApp> {
         body: SmoothListView.adaptiveBuilder(
           controller: controller,
           smoothScroll: smooth,
+          scrollDirection: Axis.vertical,
           duration: const Duration(milliseconds: 400),
           itemCount: 50,
           itemBuilder: (ctx, idx) {
             return Container(
-              height: 200,
+              height: 100,
+              width: 200,
               color: colorList[idx % colorList.length],
             );
           },
