@@ -553,7 +553,7 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
       focusNode: FocusNode(),
       autofocus: true,
       onKey: (event) {
-        if (widget.shouldScroll && widget.enableKeyScrolling) {
+        if (widget.enableKeyScrolling) {
           if ((event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
                   widget.scrollDirection == Axis.vertical) ||
               (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &&
@@ -579,12 +579,10 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
       child: Listener(
         onPointerSignal: (PointerSignalEvent event) {
           if (widget.shouldScroll) {
-            if (event.kind == PointerDeviceKind.trackpad) {
-              if (!_shouldAnimate) {
-                setState(() {
-                  _shouldAnimate = false;
-                });
-              }
+            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
+              setState(() {
+                _shouldAnimate = false;
+              });
               updatePos(widget.controller.offset, updateAnimate: false);
             }
             if (event is PointerScrollEvent && widget.smoothScroll) {
@@ -721,7 +719,7 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
       focusNode: FocusNode(),
       autofocus: true,
       onKey: (event) {
-        if (widget.shouldScroll && widget.enableKeyScrolling) {
+        if (widget.enableKeyScrolling) {
           if ((event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
                   widget.scrollDirection == Axis.vertical) ||
               (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &&
@@ -747,12 +745,10 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
       child: Listener(
         onPointerSignal: (PointerSignalEvent event) {
           if (widget.shouldScroll) {
-            if (event.kind == PointerDeviceKind.trackpad) {
-              if (!_shouldAnimate) {
-                setState(() {
-                  _shouldAnimate = false;
-                });
-              }
+            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
+              setState(() {
+                _shouldAnimate = false;
+              });
               updatePos(widget.controller.offset, updateAnimate: false);
             }
             if (event is PointerScrollEvent && widget.smoothScroll) {
@@ -906,12 +902,10 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
       child: Listener(
         onPointerSignal: (PointerSignalEvent event) {
           if (widget.shouldScroll) {
-            if (event.kind == PointerDeviceKind.trackpad) {
-              if (!_shouldAnimate) {
-                setState(() {
-                  _shouldAnimate = false;
-                });
-              }
+            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
+              setState(() {
+                _shouldAnimate = false;
+              });
               updatePos(widget.controller.offset, updateAnimate: false);
             }
             if (event is PointerScrollEvent && widget.smoothScroll) {
@@ -1033,7 +1027,7 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
       focusNode: FocusNode(),
       autofocus: true,
       onKey: (event) {
-        if (widget.shouldScroll && widget.enableKeyScrolling) {
+        if (widget.enableKeyScrolling) {
           if ((event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
                   widget.scrollDirection == Axis.vertical) ||
               (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &&
@@ -1059,12 +1053,10 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
       child: Listener(
         onPointerSignal: (PointerSignalEvent event) {
           if (widget.shouldScroll) {
-            if (event.kind == PointerDeviceKind.trackpad) {
-              if (!_shouldAnimate) {
-                setState(() {
-                  _shouldAnimate = false;
-                });
-              }
+            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
+              setState(() {
+                _shouldAnimate = false;
+              });
               updatePos(widget.controller.offset, updateAnimate: false);
             }
             if (event is PointerScrollEvent && widget.smoothScroll) {
