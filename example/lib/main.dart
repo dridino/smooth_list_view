@@ -39,26 +39,21 @@ class _MyAppState extends State<MyApp> {
       showPerformanceOverlay: true,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SmoothListView.adaptiveSeparated(
-            controller: controller,
-            smoothScroll: smooth,
-            scrollDirection: Axis.vertical,
-            duration: const Duration(milliseconds: 400),
-            itemCount: 50,
-            itemBuilder: (ctx, idx) {
-              return Container(
-                height: 200,
-                width: 200,
-                color: colorList[idx % colorList.length],
-              );
-            },
-            separatorBuilder: (ctx, idx) {
-              return Container(
-                height: 10,
-                width: 100,
-                color: Colors.black,
-              );
-            }),
+        body: SmoothListView.adaptiveBuilder(
+          controller: controller,
+          smoothScroll: smooth,
+          scrollDirection: Axis.vertical,
+          duration: const Duration(milliseconds: 400),
+          physics: const BouncingScrollPhysics(),
+          itemCount: 50,
+          itemBuilder: (ctx, idx) {
+            return Container(
+              height: 200,
+              width: 200,
+              color: colorList[idx % colorList.length],
+            );
+          },
+        ),
         floatingActionButton: FloatingActionButton(
           child: Icon(smooth ? Icons.toggle_on : Icons.toggle_off),
           onPressed: () {

@@ -110,7 +110,7 @@ class SmoothListView extends StatelessWidget {
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
     Clip clipBehavior = Clip.hardEdge,
-    Curve curve = Curves.easeOut,
+    Curve curve = Curves.easeOutQuart,
     DragStartBehavior dragStartBehavior = DragStartBehavior.start,
     bool enableKeyScrolling = true,
     ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
@@ -525,11 +525,19 @@ class _SmoothListViewBuilder extends StatefulWidget {
 
 class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
   double targetPos = 0.0;
-  bool _shouldAnimate = true;
 
-  void updatePos(double v, {bool updateAnimate = true}) {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      if (!widget.smoothScroll) {
+        targetPos = widget.controller.offset;
+      }
+    });
+  }
+
+  void updatePos(double v) {
     setState(() {
-      if (!_shouldAnimate && updateAnimate) _shouldAnimate = true;
       if (v < 0) {
         targetPos = math.max(0.0, targetPos + v);
       } else {
@@ -543,12 +551,12 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
   Widget build(BuildContext context) {
     if (widget.shouldScroll &&
         widget.smoothScroll &&
-        _shouldAnimate &&
         widget.controller.hasClients &&
         targetPos != widget.controller.offset) {
       widget.controller
           .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
     }
+
     return RawKeyboardListener(
       focusNode: FocusNode(),
       autofocus: true,
@@ -577,20 +585,17 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
         }
       },
       child: Listener(
+        onPointerPanZoomUpdate: (event) {
+          updatePos(-event.panDelta.dy * 2);
+        },
         onPointerSignal: (PointerSignalEvent event) {
           if (widget.shouldScroll) {
-            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
-              setState(() {
-                _shouldAnimate = false;
-              });
-              updatePos(widget.controller.offset, updateAnimate: false);
-            }
             if (event is PointerScrollEvent && widget.smoothScroll) {
               updatePos(event.scrollDelta.dy);
             }
           }
           if (event is PointerScrollEvent && !widget.smoothScroll) {
-            updatePos(event.scrollDelta.dy, updateAnimate: false);
+            updatePos(event.scrollDelta.dy);
           }
         },
         child: ListView.builder(
@@ -607,10 +612,9 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
           itemExtent: widget.itemExtent,
           keyboardDismissBehavior: widget.keyboardDismissBehavior,
           padding: widget.padding,
-          physics:
-              (widget.smoothScroll && _shouldAnimate) || !widget.shouldScroll
-                  ? const NeverScrollableScrollPhysics()
-                  : widget.physics,
+          physics: widget.smoothScroll || !widget.shouldScroll
+              ? const NeverScrollableScrollPhysics()
+              : widget.physics,
           primary: widget.primary,
           prototypeItem: widget.prototypeItem,
           restorationId: widget.restorationId,
@@ -691,11 +695,19 @@ class _SmoothListViewSeparated extends StatefulWidget {
 
 class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
   double targetPos = 0.0;
-  bool _shouldAnimate = true;
 
-  void updatePos(double v, {bool updateAnimate = true}) {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      if (!widget.smoothScroll) {
+        targetPos = widget.controller.offset;
+      }
+    });
+  }
+
+  void updatePos(double v) {
     setState(() {
-      if (!_shouldAnimate && updateAnimate) _shouldAnimate = true;
       if (v < 0) {
         targetPos = math.max(0.0, targetPos + v);
       } else {
@@ -709,7 +721,6 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
   Widget build(BuildContext context) {
     if (widget.shouldScroll &&
         widget.smoothScroll &&
-        _shouldAnimate &&
         widget.controller.hasClients &&
         targetPos != widget.controller.offset) {
       widget.controller
@@ -743,20 +754,17 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
         }
       },
       child: Listener(
+        onPointerPanZoomUpdate: (event) {
+          updatePos(-event.panDelta.dy * 2);
+        },
         onPointerSignal: (PointerSignalEvent event) {
           if (widget.shouldScroll) {
-            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
-              setState(() {
-                _shouldAnimate = false;
-              });
-              updatePos(widget.controller.offset, updateAnimate: false);
-            }
             if (event is PointerScrollEvent && widget.smoothScroll) {
               updatePos(event.scrollDelta.dy);
             }
           }
           if (event is PointerScrollEvent && !widget.smoothScroll) {
-            updatePos(event.scrollDelta.dy, updateAnimate: false);
+            updatePos(event.scrollDelta.dy);
           }
         },
         child: ListView.separated(
@@ -772,10 +780,9 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
           itemCount: widget.itemCount,
           keyboardDismissBehavior: widget.keyboardDismissBehavior,
           padding: widget.padding,
-          physics:
-              (widget.smoothScroll && _shouldAnimate) || !widget.shouldScroll
-                  ? const NeverScrollableScrollPhysics()
-                  : widget.physics,
+          physics: widget.smoothScroll || !widget.shouldScroll
+              ? const NeverScrollableScrollPhysics()
+              : widget.physics,
           primary: widget.primary,
           restorationId: widget.restorationId,
           reverse: widget.reverse,
@@ -848,11 +855,19 @@ class _SmoothListViewItems extends StatefulWidget {
 
 class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
   double targetPos = 0.0;
-  bool _shouldAnimate = false;
 
-  void updatePos(double v, {bool updateAnimate = true}) {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      if (!widget.smoothScroll) {
+        targetPos = widget.controller.offset;
+      }
+    });
+  }
+
+  void updatePos(double v) {
     setState(() {
-      if (!_shouldAnimate && updateAnimate) _shouldAnimate = true;
       if (v < 0) {
         targetPos = math.max(0.0, targetPos + v);
       } else {
@@ -866,7 +881,6 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
   Widget build(BuildContext context) {
     if (widget.shouldScroll &&
         widget.smoothScroll &&
-        _shouldAnimate &&
         widget.controller.hasClients &&
         targetPos != widget.controller.offset) {
       widget.controller
@@ -900,20 +914,17 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
         }
       },
       child: Listener(
+        onPointerPanZoomUpdate: (event) {
+          updatePos(-event.panDelta.dy * 2);
+        },
         onPointerSignal: (PointerSignalEvent event) {
           if (widget.shouldScroll) {
-            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
-              setState(() {
-                _shouldAnimate = false;
-              });
-              updatePos(widget.controller.offset, updateAnimate: false);
-            }
             if (event is PointerScrollEvent && widget.smoothScroll) {
               updatePos(event.scrollDelta.dy);
             }
           }
           if (event is PointerScrollEvent && !widget.smoothScroll) {
-            updatePos(event.scrollDelta.dy, updateAnimate: false);
+            updatePos(event.scrollDelta.dy);
           }
         },
         child: ListView(
@@ -927,10 +938,9 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
           itemExtent: widget.itemExtent,
           keyboardDismissBehavior: widget.keyboardDismissBehavior,
           padding: widget.padding,
-          physics:
-              (widget.smoothScroll && _shouldAnimate) || !widget.shouldScroll
-                  ? const NeverScrollableScrollPhysics()
-                  : widget.physics,
+          physics: widget.smoothScroll || !widget.shouldScroll
+              ? const NeverScrollableScrollPhysics()
+              : widget.physics,
           primary: widget.primary,
           prototypeItem: widget.prototypeItem,
           restorationId: widget.restorationId,
@@ -999,11 +1009,19 @@ class _SmoothListViewCustom extends StatefulWidget {
 
 class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
   double targetPos = 0.0;
-  bool _shouldAnimate = true;
 
-  void updatePos(double v, {bool updateAnimate = true}) {
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addListener(() {
+      if (!widget.smoothScroll) {
+        targetPos = widget.controller.offset;
+      }
+    });
+  }
+
+  void updatePos(double v) {
     setState(() {
-      if (!_shouldAnimate && updateAnimate) _shouldAnimate = true;
       if (v < 0) {
         targetPos = math.max(0.0, targetPos + v);
       } else {
@@ -1017,7 +1035,6 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
   Widget build(BuildContext context) {
     if (widget.shouldScroll &&
         widget.smoothScroll &&
-        _shouldAnimate &&
         widget.controller.hasClients &&
         targetPos != widget.controller.offset) {
       widget.controller
@@ -1051,20 +1068,17 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
         }
       },
       child: Listener(
+        onPointerPanZoomUpdate: (event) {
+          updatePos(-event.panDelta.dy * 2);
+        },
         onPointerSignal: (PointerSignalEvent event) {
           if (widget.shouldScroll) {
-            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
-              setState(() {
-                _shouldAnimate = false;
-              });
-              updatePos(widget.controller.offset, updateAnimate: false);
-            }
             if (event is PointerScrollEvent && widget.smoothScroll) {
               updatePos(event.scrollDelta.dy);
             }
           }
           if (event is PointerScrollEvent && !widget.smoothScroll) {
-            updatePos(event.scrollDelta.dy, updateAnimate: false);
+            updatePos(event.scrollDelta.dy);
           }
         },
         child: ListView.custom(
@@ -1076,10 +1090,9 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
           itemExtent: widget.itemExtent,
           keyboardDismissBehavior: widget.keyboardDismissBehavior,
           padding: widget.padding,
-          physics:
-              (widget.smoothScroll && _shouldAnimate) || !widget.shouldScroll
-                  ? const NeverScrollableScrollPhysics()
-                  : widget.physics,
+          physics: widget.smoothScroll || !widget.shouldScroll
+              ? const NeverScrollableScrollPhysics()
+              : widget.physics,
           primary: widget.primary,
           prototypeItem: widget.prototypeItem,
           restorationId: widget.restorationId,
