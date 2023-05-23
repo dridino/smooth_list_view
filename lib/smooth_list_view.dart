@@ -20,10 +20,11 @@ class SmoothListView extends StatelessWidget {
   final double? cacheExtent;
   final List<Widget> children;
   final Clip clipBehavior;
-  final ScrollController controller;
+  final ScrollController? controller;
   final Curve curve;
   final DragStartBehavior dragStartBehavior;
   final Duration duration;
+  final bool enableKeyScrolling;
   final double? itemExtent;
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
   final EdgeInsetsGeometry? padding;
@@ -34,35 +35,34 @@ class SmoothListView extends StatelessWidget {
   final bool reverse;
   final Axis scrollDirection;
   final int? semanticChildCount;
-  final bool shrinkWrap;
-  final bool enableKeyScrolling;
   final bool shouldScroll;
+  final bool shrinkWrap;
 
   const SmoothListView({
     Key? key,
-    required this.controller,
-    required this.duration,
     required this.children,
-    this.shouldScroll = true,
-    this.enableKeyScrolling = true,
-    this.curve = Curves.easeOut,
-    this.scrollDirection = Axis.vertical,
-    this.reverse = false,
-    this.shrinkWrap = false,
+    required this.duration,
+    this.addAutomaticKeepAlives = true,
     this.addRepaintBoundaries = true,
     this.addSemanticIndexes = true,
-    this.addAutomaticKeepAlives = true,
-    this.dragStartBehavior = DragStartBehavior.start,
-    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.clipBehavior = Clip.hardEdge,
-    this.primary,
-    this.padding,
-    this.itemExtent,
-    this.prototypeItem,
+    this.curve = Curves.easeOut,
+    this.dragStartBehavior = DragStartBehavior.start,
+    this.enableKeyScrolling = true,
+    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
+    this.reverse = false,
+    this.scrollDirection = Axis.vertical,
+    this.shouldScroll = true,
+    this.shrinkWrap = false,
     this.cacheExtent,
-    this.semanticChildCount,
-    this.restorationId,
+    this.controller,
+    this.itemExtent,
+    this.padding,
     this.physics,
+    this.primary,
+    this.prototypeItem,
+    this.restorationId,
+    this.semanticChildCount,
   }) : super(key: key);
 
   @override
@@ -73,23 +73,24 @@ class SmoothListView extends StatelessWidget {
       addSemanticIndexes: addSemanticIndexes,
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
-      controller: controller,
+      controller: controller ?? ScrollController(),
+      curve: curve,
       dragStartBehavior: dragStartBehavior,
+      duration: duration,
+      enableKeyScrolling: enableKeyScrolling,
       itemExtent: itemExtent,
       keyboardDismissBehavior: keyboardDismissBehavior,
       padding: padding,
+      physics: physics,
       primary: primary,
       prototypeItem: prototypeItem,
       restorationId: restorationId,
       reverse: reverse,
       scrollDirection: scrollDirection,
       semanticChildCount: semanticChildCount,
-      shrinkWrap: shrinkWrap,
-      curve: curve,
-      duration: duration,
-      physics: physics,
-      enableKeyScrolling: enableKeyScrolling,
       shouldScroll: shouldScroll,
+      shrinkWrap: shrinkWrap,
+      smoothScroll: true,
       children: children,
     );
   }
@@ -98,36 +99,38 @@ class SmoothListView extends StatelessWidget {
   /// usage.
   ///
   /// The constructor matches the `ListView.builder()`'s one, with the exact
-  /// same parameters except for `curve` and `duration`, used to customize
-  /// the animation.
+  /// same parameters, except for `curve` and `duration` used to customize
+  /// the animation, `enableKeyScrolling` to enable scroll while pressing
+  /// arrow keys and `shouldScroll` used to decide wether this `ListView`
+  /// should be scrollale or not.
   static Widget builder({
     Key? key,
-    required IndexedWidgetBuilder itemBuilder,
     required Duration duration,
-    Axis scrollDirection = Axis.vertical,
-    bool reverse = false,
-    ScrollController? controller,
-    bool? primary,
-    bool shrinkWrap = false,
-    EdgeInsetsGeometry? padding,
-    double? itemExtent,
-    Widget? prototypeItem,
-    ChildIndexGetter? findChildIndexCallback,
-    int? itemCount,
+    required IndexedWidgetBuilder itemBuilder,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
-    double? cacheExtent,
-    int? semanticChildCount,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
-        ScrollViewKeyboardDismissBehavior.manual,
-    String? restorationId,
     Clip clipBehavior = Clip.hardEdge,
     Curve curve = Curves.easeOut,
-    ScrollPhysics? physics,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
     bool enableKeyScrolling = true,
+    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
+        ScrollViewKeyboardDismissBehavior.manual,
+    bool reverse = false,
+    Axis scrollDirection = Axis.vertical,
     bool shouldScroll = true,
+    bool shrinkWrap = false,
+    double? cacheExtent,
+    ScrollController? controller,
+    ChildIndexGetter? findChildIndexCallback,
+    int? itemCount,
+    double? itemExtent,
+    EdgeInsetsGeometry? padding,
+    ScrollPhysics? physics,
+    bool? primary,
+    Widget? prototypeItem,
+    String? restorationId,
+    int? semanticChildCount,
   }) {
     controller = controller ?? ScrollController();
     return _SmoothListViewBuilder(
@@ -138,25 +141,26 @@ class SmoothListView extends StatelessWidget {
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
       controller: controller,
+      curve: curve,
       dragStartBehavior: dragStartBehavior,
+      duration: duration,
+      enableKeyScrolling: enableKeyScrolling,
       findChildIndexCallback: findChildIndexCallback,
       itemBuilder: itemBuilder,
       itemCount: itemCount,
       itemExtent: itemExtent,
       keyboardDismissBehavior: keyboardDismissBehavior,
       padding: padding,
+      physics: physics,
       primary: primary,
       prototypeItem: prototypeItem,
       restorationId: restorationId,
       reverse: reverse,
       scrollDirection: scrollDirection,
       semanticChildCount: semanticChildCount,
-      shrinkWrap: shrinkWrap,
-      curve: curve,
-      duration: duration,
-      physics: physics,
       shouldScroll: shouldScroll,
-      enableKeyScrolling: enableKeyScrolling,
+      shrinkWrap: shrinkWrap,
+      smoothScroll: true,
     );
   }
 
@@ -165,40 +169,42 @@ class SmoothListView extends StatelessWidget {
   ///
   /// The constructor matches the `ListView.builder()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation and `smoothScroll`.
+  /// the animation, `enableKeyScrolling` to enable scroll while pressing
+  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
+  /// should be scrollale or not and `smoothScroll`.
   ///
   /// If `smoothScroll` is set, it will be used to determine wether the list
   /// should be animated or not. Otherwise, `smoothScroll` is set to
   /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
   static Widget adaptiveBuilder({
     Key? key,
+    required Duration duration,
     required IndexedWidgetBuilder itemBuilder,
-    Duration duration = const Duration(milliseconds: 100),
-    Axis scrollDirection = Axis.vertical,
-    bool reverse = false,
-    ScrollController? controller,
-    bool? primary,
-    bool shrinkWrap = false,
-    EdgeInsetsGeometry? padding,
-    double? itemExtent,
-    Widget? prototypeItem,
-    ChildIndexGetter? findChildIndexCallback,
-    int? itemCount,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
-    double? cacheExtent,
-    int? semanticChildCount,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
-        ScrollViewKeyboardDismissBehavior.manual,
-    String? restorationId,
     Clip clipBehavior = Clip.hardEdge,
     Curve curve = Curves.easeOut,
-    ScrollPhysics? physics,
-    bool? smoothScroll,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
     bool enableKeyScrolling = true,
+    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
+        ScrollViewKeyboardDismissBehavior.manual,
+    bool reverse = false,
+    Axis scrollDirection = Axis.vertical,
     bool shouldScroll = true,
+    bool shrinkWrap = false,
+    double? cacheExtent,
+    ScrollController? controller,
+    ChildIndexGetter? findChildIndexCallback,
+    int? itemCount,
+    double? itemExtent,
+    EdgeInsetsGeometry? padding,
+    ScrollPhysics? physics,
+    bool? primary,
+    Widget? prototypeItem,
+    String? restorationId,
+    int? semanticChildCount,
+    bool? smoothScroll,
   }) {
     smoothScroll = smoothScroll ??
         (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
@@ -211,26 +217,26 @@ class SmoothListView extends StatelessWidget {
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
       controller: controller,
+      curve: curve,
       dragStartBehavior: dragStartBehavior,
+      duration: duration,
+      enableKeyScrolling: enableKeyScrolling,
       findChildIndexCallback: findChildIndexCallback,
       itemBuilder: itemBuilder,
       itemCount: itemCount,
       itemExtent: itemExtent,
       keyboardDismissBehavior: keyboardDismissBehavior,
       padding: padding,
+      physics: physics,
       primary: primary,
       prototypeItem: prototypeItem,
       restorationId: restorationId,
       reverse: reverse,
       scrollDirection: scrollDirection,
       semanticChildCount: semanticChildCount,
-      shrinkWrap: shrinkWrap,
-      curve: curve,
-      physics: physics,
-      duration: duration,
-      smoothScroll: smoothScroll,
       shouldScroll: shouldScroll,
-      enableKeyScrolling: enableKeyScrolling,
+      shrinkWrap: shrinkWrap,
+      smoothScroll: smoothScroll,
     );
   }
 
@@ -239,38 +245,40 @@ class SmoothListView extends StatelessWidget {
   ///
   /// The constructor matches the `ListView()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation and `smoothScroll`.
+  /// the animation, `enableKeyScrolling` to enable scroll while pressing
+  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
+  /// should be scrollale or not and `smoothScroll`.
   ///
   /// If `smoothScroll` is set, it will be used to determine wether the list
   /// should be animated or not. Otherwise, `smoothScroll` is set to
   /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
   static Widget adaptive({
     Key? key,
-    required Duration duration,
     required List<Widget> children,
-    Axis scrollDirection = Axis.vertical,
-    bool reverse = false,
-    ScrollController? controller,
-    bool? primary,
-    bool shrinkWrap = false,
-    EdgeInsetsGeometry? padding,
-    double? itemExtent,
-    Widget? prototypeItem,
+    required Duration duration,
     bool addAutomaticKeepAlives = true,
     bool addRepaintBoundaries = true,
     bool addSemanticIndexes = true,
-    double? cacheExtent,
-    int? semanticChildCount,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
-        ScrollViewKeyboardDismissBehavior.manual,
-    String? restorationId,
     Clip clipBehavior = Clip.hardEdge,
     Curve curve = Curves.easeOut,
-    ScrollPhysics? physics,
-    bool? smoothScroll,
-    bool shouldScroll = true,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
     bool enableKeyScrolling = true,
+    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
+        ScrollViewKeyboardDismissBehavior.manual,
+    bool reverse = false,
+    Axis scrollDirection = Axis.vertical,
+    bool shouldScroll = true,
+    bool shrinkWrap = false,
+    double? cacheExtent,
+    ScrollController? controller,
+    double? itemExtent,
+    EdgeInsetsGeometry? padding,
+    ScrollPhysics? physics,
+    bool? primary,
+    Widget? prototypeItem,
+    String? restorationId,
+    int? semanticChildCount,
+    bool? smoothScroll,
   }) {
     smoothScroll = smoothScroll ??
         (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
@@ -283,10 +291,14 @@ class SmoothListView extends StatelessWidget {
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
       controller: controller,
+      curve: curve,
       dragStartBehavior: dragStartBehavior,
+      duration: duration,
+      enableKeyScrolling: enableKeyScrolling,
       itemExtent: itemExtent,
       keyboardDismissBehavior: keyboardDismissBehavior,
       padding: padding,
+      physics: physics,
       primary: primary,
       prototypeItem: prototypeItem,
       restorationId: restorationId,
@@ -294,73 +306,69 @@ class SmoothListView extends StatelessWidget {
       scrollDirection: scrollDirection,
       semanticChildCount: semanticChildCount,
       shrinkWrap: shrinkWrap,
-      curve: curve,
-      duration: duration,
-      physics: physics,
-      smoothScroll: smoothScroll,
-      enableKeyScrolling: enableKeyScrolling,
       shouldScroll: shouldScroll,
+      smoothScroll: smoothScroll,
       children: children,
     );
   }
 }
 
 class _SmoothListViewBuilder extends StatefulWidget {
-  final Axis scrollDirection;
-  final bool reverse;
-  final ScrollController controller;
-  final bool? primary;
-  final bool shrinkWrap;
-  final EdgeInsetsGeometry? padding;
-  final double? itemExtent;
-  final Widget? prototypeItem;
-  final IndexedWidgetBuilder itemBuilder;
-  final ChildIndexGetter? findChildIndexCallback;
-  final int? itemCount;
   final bool addAutomaticKeepAlives;
   final bool addRepaintBoundaries;
   final bool addSemanticIndexes;
   final double? cacheExtent;
-  final int? semanticChildCount;
-  final DragStartBehavior dragStartBehavior;
-  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
-  final String? restorationId;
   final Clip clipBehavior;
+  final ScrollController controller;
   final Curve curve;
+  final DragStartBehavior dragStartBehavior;
   final Duration duration;
-  final ScrollPhysics? physics;
-  final bool smoothScroll;
   final bool enableKeyScrolling;
+  final ChildIndexGetter? findChildIndexCallback;
+  final IndexedWidgetBuilder itemBuilder;
+  final int? itemCount;
+  final double? itemExtent;
+  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+  final EdgeInsetsGeometry? padding;
+  final ScrollPhysics? physics;
+  final bool? primary;
+  final Widget? prototypeItem;
+  final String? restorationId;
+  final bool reverse;
+  final Axis scrollDirection;
+  final int? semanticChildCount;
   final bool shouldScroll;
+  final bool shrinkWrap;
+  final bool smoothScroll;
 
   const _SmoothListViewBuilder({
     Key? key,
+    required this.addAutomaticKeepAlives,
+    required this.addRepaintBoundaries,
+    required this.addSemanticIndexes,
+    required this.clipBehavior,
     required this.controller,
     required this.curve,
+    required this.dragStartBehavior,
     required this.duration,
+    required this.enableKeyScrolling,
     required this.itemBuilder,
-    this.shouldScroll = true,
-    this.enableKeyScrolling = true,
-    this.smoothScroll = true,
-    this.scrollDirection = Axis.vertical,
-    this.reverse = false,
-    this.shrinkWrap = false,
-    this.addRepaintBoundaries = true,
-    this.addSemanticIndexes = true,
-    this.addAutomaticKeepAlives = true,
-    this.dragStartBehavior = DragStartBehavior.start,
-    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
-    this.clipBehavior = Clip.hardEdge,
-    this.primary,
-    this.padding,
-    this.itemExtent,
-    this.prototypeItem,
+    required this.keyboardDismissBehavior,
+    required this.reverse,
+    required this.scrollDirection,
+    required this.shouldScroll,
+    required this.shrinkWrap,
+    required this.smoothScroll,
+    this.cacheExtent,
     this.findChildIndexCallback,
     this.itemCount,
-    this.cacheExtent,
-    this.semanticChildCount,
-    this.restorationId,
+    this.itemExtent,
+    this.padding,
     this.physics,
+    this.primary,
+    this.prototypeItem,
+    this.restorationId,
+    this.semanticChildCount,
   }) : super(key: key);
 
   @override
@@ -469,57 +477,57 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
 }
 
 class _SmoothListViewItems extends StatefulWidget {
-  final Axis scrollDirection;
-  final bool reverse;
-  final ScrollController controller;
-  final bool? primary;
-  final bool shrinkWrap;
-  final EdgeInsetsGeometry? padding;
-  final double? itemExtent;
-  final Widget? prototypeItem;
   final bool addAutomaticKeepAlives;
   final bool addRepaintBoundaries;
   final bool addSemanticIndexes;
   final double? cacheExtent;
-  final int? semanticChildCount;
   final List<Widget> children;
+  final Clip clipBehavior;
+  final ScrollController controller;
+  final Curve curve;
   final DragStartBehavior dragStartBehavior;
+  final Duration duration;
+  final bool enableKeyScrolling;
+  final double? itemExtent;
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
   final String? restorationId;
-  final Clip clipBehavior;
-  final Curve curve;
-  final Duration duration;
+  final bool reverse;
+  final EdgeInsetsGeometry? padding;
   final ScrollPhysics? physics;
-  final bool smoothScroll;
-  final bool enableKeyScrolling;
+  final bool? primary;
+  final Widget? prototypeItem;
+  final Axis scrollDirection;
+  final int? semanticChildCount;
   final bool shouldScroll;
+  final bool shrinkWrap;
+  final bool smoothScroll;
 
   const _SmoothListViewItems({
     Key? key,
+    required this.addAutomaticKeepAlives,
+    required this.addRepaintBoundaries,
+    required this.addSemanticIndexes,
+    required this.children,
+    required this.clipBehavior,
     required this.controller,
     required this.curve,
+    required this.dragStartBehavior,
     required this.duration,
-    required this.children,
-    this.shouldScroll = true,
-    this.enableKeyScrolling = true,
-    this.smoothScroll = true,
-    this.scrollDirection = Axis.vertical,
-    this.reverse = false,
-    this.shrinkWrap = false,
-    this.addRepaintBoundaries = true,
-    this.addSemanticIndexes = true,
-    this.addAutomaticKeepAlives = true,
-    this.dragStartBehavior = DragStartBehavior.start,
-    this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
-    this.clipBehavior = Clip.hardEdge,
-    this.primary,
-    this.padding,
-    this.itemExtent,
-    this.prototypeItem,
+    required this.enableKeyScrolling,
+    required this.keyboardDismissBehavior,
+    required this.reverse,
+    required this.scrollDirection,
+    required this.shouldScroll,
+    required this.shrinkWrap,
+    required this.smoothScroll,
     this.cacheExtent,
-    this.semanticChildCount,
+    this.itemExtent,
     this.restorationId,
+    this.padding,
     this.physics,
+    this.primary,
+    this.prototypeItem,
+    this.semanticChildCount,
   }) : super(key: key);
 
   @override
