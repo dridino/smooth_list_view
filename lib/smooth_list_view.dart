@@ -944,3 +944,151 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
     );
   }
 }
+
+class _SmoothListViewCustom extends StatefulWidget {
+  final double? cacheExtent;
+  final SliverChildDelegate childrenDelegate;
+  final Clip clipBehavior;
+  final ScrollController controller;
+  final Curve curve;
+  final DragStartBehavior dragStartBehavior;
+  final Duration duration;
+  final bool enableKeyScrolling;
+  final double? itemExtent;
+  final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+  final EdgeInsetsGeometry? padding;
+  final ScrollPhysics? physics;
+  final bool? primary;
+  final Widget? prototypeItem;
+  final String? restorationId;
+  final bool reverse;
+  final Axis scrollDirection;
+  final int? semanticChildCount;
+  final bool shouldScroll;
+  final bool shrinkWrap;
+  final bool smoothScroll;
+
+  const _SmoothListViewCustom({
+    Key? key,
+    required this.childrenDelegate,
+    required this.clipBehavior,
+    required this.controller,
+    required this.curve,
+    required this.dragStartBehavior,
+    required this.duration,
+    required this.enableKeyScrolling,
+    required this.keyboardDismissBehavior,
+    required this.reverse,
+    required this.scrollDirection,
+    required this.shouldScroll,
+    required this.shrinkWrap,
+    required this.smoothScroll,
+    this.cacheExtent,
+    this.itemExtent,
+    this.padding,
+    this.physics,
+    this.primary,
+    this.prototypeItem,
+    this.restorationId,
+    this.semanticChildCount,
+  }) : super(key: key);
+
+  @override
+  State<_SmoothListViewCustom> createState() => _SmoothListViewCustomState();
+}
+
+class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
+  double targetPos = 0.0;
+  bool _shouldAnimate = true;
+
+  void updatePos(double v, {bool updateAnimate = true}) {
+    setState(() {
+      if (!_shouldAnimate && updateAnimate) _shouldAnimate = true;
+      if (v < 0) {
+        targetPos = math.max(0.0, targetPos + v);
+      } else {
+        targetPos =
+            math.min(widget.controller.position.maxScrollExtent, targetPos + v);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.shouldScroll &&
+        widget.smoothScroll &&
+        _shouldAnimate &&
+        widget.controller.hasClients &&
+        targetPos != widget.controller.offset) {
+      widget.controller
+          .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
+    }
+    return RawKeyboardListener(
+      focusNode: FocusNode(),
+      autofocus: true,
+      onKey: (event) {
+        if (widget.shouldScroll && widget.enableKeyScrolling) {
+          if ((event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
+                  widget.scrollDirection == Axis.vertical) ||
+              (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &&
+                  widget.scrollDirection == Axis.horizontal)) {
+            if (!widget.smoothScroll) {
+              widget.controller.jumpTo(math.min(
+                  widget.controller.position.maxScrollExtent,
+                  widget.controller.offset + 111.0));
+            }
+            updatePos(111.0);
+          } else if ((event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
+                  widget.scrollDirection == Axis.vertical) ||
+              (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
+                  widget.scrollDirection == Axis.horizontal)) {
+            if (!widget.smoothScroll) {
+              widget.controller
+                  .jumpTo(math.max(0.0, widget.controller.offset - 111.0));
+            }
+            updatePos(-111.0);
+          }
+        }
+      },
+      child: Listener(
+        onPointerSignal: (PointerSignalEvent event) {
+          if (widget.shouldScroll) {
+            if (!_shouldAnimate && event.kind == PointerDeviceKind.trackpad) {
+              setState(() {
+                _shouldAnimate = false;
+              });
+              updatePos(widget.controller.offset, updateAnimate: false);
+            }
+            if (event is PointerScrollEvent && widget.smoothScroll) {
+              updatePos(event.scrollDelta.dy);
+            }
+          }
+          if (event is PointerScrollEvent && !widget.smoothScroll) {
+            updatePos(event.scrollDelta.dy, updateAnimate: false);
+          }
+        },
+        child: ListView.custom(
+          cacheExtent: widget.cacheExtent,
+          childrenDelegate: widget.childrenDelegate,
+          clipBehavior: widget.clipBehavior,
+          controller: widget.controller,
+          dragStartBehavior: widget.dragStartBehavior,
+          itemExtent: widget.itemExtent,
+          keyboardDismissBehavior: widget.keyboardDismissBehavior,
+          padding: widget.padding,
+          physics:
+              (widget.smoothScroll && _shouldAnimate) || !widget.shouldScroll
+                  ? const NeverScrollableScrollPhysics()
+                  : widget.physics,
+          primary: widget.primary,
+          prototypeItem: widget.prototypeItem,
+          restorationId: widget.restorationId,
+          reverse: widget.reverse,
+          scrollDirection: widget.scrollDirection,
+          semanticChildCount: widget.semanticChildCount,
+          shrinkWrap: widget.shrinkWrap,
+        ),
+      ),
+    );
+  }
+}
