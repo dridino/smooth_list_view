@@ -388,6 +388,131 @@ class SmoothListView extends StatelessWidget {
     );
   }
 
+  /// Implements a smooth version of `ListView.custom()`, mainly for desktop
+  /// usage.
+  ///
+  /// The constructor matches the `ListView.custom()`'s one, with the exact
+  /// same parameters, except for `curve` and `duration` used to customize
+  /// the animation, `enableKeyScrolling` to enable scroll while pressing
+  /// arrow keys and `shouldScroll` used to decide wether this `ListView`
+  /// should be scrollale or not.
+  static Widget custom({
+    Key? key,
+    required SliverChildDelegate childrenDelegate,
+    required Duration duration,
+    Clip clipBehavior = Clip.hardEdge,
+    Curve curve = Curves.easeOut,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+    bool enableKeyScrolling = true,
+    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
+        ScrollViewKeyboardDismissBehavior.manual,
+    bool reverse = false,
+    Axis scrollDirection = Axis.vertical,
+    bool shouldScroll = true,
+    bool shrinkWrap = false,
+    double? cacheExtent,
+    ScrollController? controller,
+    double? itemExtent,
+    EdgeInsetsGeometry? padding,
+    ScrollPhysics? physics,
+    bool? primary,
+    Widget? prototypeItem,
+    String? restorationId,
+    int? semanticChildCount,
+  }) {
+    controller = controller ?? ScrollController();
+    return _SmoothListViewCustom(
+      key: key,
+      cacheExtent: cacheExtent,
+      childrenDelegate: childrenDelegate,
+      clipBehavior: clipBehavior,
+      controller: controller,
+      curve: curve,
+      dragStartBehavior: dragStartBehavior,
+      duration: duration,
+      enableKeyScrolling: enableKeyScrolling,
+      itemExtent: itemExtent,
+      keyboardDismissBehavior: keyboardDismissBehavior,
+      padding: padding,
+      physics: physics,
+      primary: primary,
+      prototypeItem: prototypeItem,
+      restorationId: restorationId,
+      reverse: reverse,
+      scrollDirection: scrollDirection,
+      semanticChildCount: semanticChildCount,
+      shouldScroll: shouldScroll,
+      shrinkWrap: shrinkWrap,
+      smoothScroll: true,
+    );
+  }
+
+  /// In a similar approach than the `Switch.adaptive()` constructor, this
+  /// implements a smooth version of `ListView.custom()`, but adaptive.
+  ///
+  /// The constructor matches the `ListView.custom()`'s one, with the exact
+  /// same parameters, except for `curve` and `duration` used to customize
+  /// the animation, `enableKeyScrolling` to enable scroll while pressing
+  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
+  /// should be scrollale or not and `smoothScroll`.
+  ///
+  /// If `smoothScroll` is set, it will be used to determine wether the list
+  /// should be animated or not. Otherwise, `smoothScroll` is set to
+  /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
+  static Widget adaptiveCustom({
+    Key? key,
+    required SliverChildDelegate childrenDelegate,
+    required Duration duration,
+    Clip clipBehavior = Clip.hardEdge,
+    Curve curve = Curves.easeOut,
+    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
+    bool enableKeyScrolling = true,
+    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
+        ScrollViewKeyboardDismissBehavior.manual,
+    bool reverse = false,
+    Axis scrollDirection = Axis.vertical,
+    bool shouldScroll = true,
+    bool shrinkWrap = false,
+    double? cacheExtent,
+    ScrollController? controller,
+    double? itemExtent,
+    EdgeInsetsGeometry? padding,
+    ScrollPhysics? physics,
+    bool? primary,
+    Widget? prototypeItem,
+    String? restorationId,
+    int? semanticChildCount,
+    bool? smoothScroll,
+  }) {
+    smoothScroll = smoothScroll ??
+        (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+    controller = controller ?? ScrollController();
+    return _SmoothListViewCustom(
+      key: key,
+      cacheExtent: cacheExtent,
+      childrenDelegate: childrenDelegate,
+      clipBehavior: clipBehavior,
+      controller: controller,
+      curve: curve,
+      dragStartBehavior: dragStartBehavior,
+      duration: duration,
+      enableKeyScrolling: enableKeyScrolling,
+      itemExtent: itemExtent,
+      keyboardDismissBehavior: keyboardDismissBehavior,
+      padding: padding,
+      physics: physics,
+      primary: primary,
+      prototypeItem: prototypeItem,
+      restorationId: restorationId,
+      reverse: reverse,
+      scrollDirection: scrollDirection,
+      semanticChildCount: semanticChildCount,
+      shouldScroll: shouldScroll,
+      shrinkWrap: shrinkWrap,
+      smoothScroll: smoothScroll,
+    );
+  }
+
   /// In a similar approach than the `Switch.adaptive()` constructor, this
   /// implements a smooth version of `ListView()`, but adaptive.
   ///
