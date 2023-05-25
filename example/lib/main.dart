@@ -20,12 +20,11 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      showPerformanceOverlay: true,
+      showPerformanceOverlay: false,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SmoothListView.builder(
           smoothScroll: smooth,
-          scrollDirection: Axis.horizontal,
           duration: const Duration(milliseconds: 400),
           itemBuilder: (ctx, idx) {
             return Container(

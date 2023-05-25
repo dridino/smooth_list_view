@@ -1,19 +1,14 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
-
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
-
 A flutter plugin to implement smooth scrolling on desktop and web.
 
-<!--! insérer une vidéo comparant avec et sans -->
+## Comparison
+
+### Without
+
+![Alt](assets/without.gif "without the package")
+
+### With
+
+![Alt](assets/with.gif "with the package")
 
 ## Features
 
@@ -56,7 +51,9 @@ Import the package :
 import 'package:smooth_list_view/smooth_list_view.dart';
 ```
 
-And replace :
+### ListView
+
+Replace :
 
 ```dart
 // ...
@@ -75,6 +72,81 @@ With :
 Widget build(BuildContext context) {
     // You can keep the exact same parameters
     return SmoothListView(...);
+}
+// ...
+```
+
+### ListView.builder()
+
+Replace :
+
+```dart
+// ...
+@override
+Widget build(BuildContext context) {
+    return ListView.builder(...);
+}
+// ...
+```
+
+With :
+
+```dart
+// ...
+@override
+Widget build(BuildContext context) {
+    // You can keep the exact same parameters
+    return SmoothListView.builder(...);
+}
+// ...
+```
+
+### ListView.separated()
+
+Replace :
+
+```dart
+// ...
+@override
+Widget build(BuildContext context) {
+    return ListView.separated(...);
+}
+// ...
+```
+
+With :
+
+```dart
+// ...
+@override
+Widget build(BuildContext context) {
+    // You can keep the exact same parameters
+    return SmoothListView.separated(...);
+}
+// ...
+```
+
+### ListView.custom()
+
+Replace :
+
+```dart
+// ...
+@override
+Widget build(BuildContext context) {
+    return ListView.custom(...);
+}
+// ...
+```
+
+With :
+
+```dart
+// ...
+@override
+Widget build(BuildContext context) {
+    // You can keep the exact same parameters
+    return SmoothListView.custom(...);
 }
 // ...
 ```
