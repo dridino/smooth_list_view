@@ -36,6 +36,7 @@ class SmoothListView extends StatelessWidget {
   final int? semanticChildCount;
   final bool shouldScroll;
   final bool shrinkWrap;
+  final bool smoothScroll;
 
   const SmoothListView({
     Key? key,
@@ -53,6 +54,7 @@ class SmoothListView extends StatelessWidget {
     this.scrollDirection = Axis.vertical,
     this.shouldScroll = true,
     this.shrinkWrap = false,
+    this.smoothScroll = true,
     this.cacheExtent,
     this.controller,
     this.itemExtent,
@@ -66,87 +68,21 @@ class SmoothListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool newSmoothScroll = smoothScroll &&
+        (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+    final ScrollController newController = controller ?? ScrollController();
     return _SmoothListViewItems(
-      addAutomaticKeepAlives: addAutomaticKeepAlives,
-      addRepaintBoundaries: addRepaintBoundaries,
-      addSemanticIndexes: addSemanticIndexes,
-      cacheExtent: cacheExtent,
-      clipBehavior: clipBehavior,
-      controller: controller ?? ScrollController(),
-      curve: curve,
-      dragStartBehavior: dragStartBehavior,
-      duration: duration,
-      enableKeyScrolling: enableKeyScrolling,
-      itemExtent: itemExtent,
-      keyboardDismissBehavior: keyboardDismissBehavior,
-      padding: padding,
-      physics: physics,
-      primary: primary,
-      prototypeItem: prototypeItem,
-      restorationId: restorationId,
-      reverse: reverse,
-      scrollDirection: scrollDirection,
-      semanticChildCount: semanticChildCount,
-      shouldScroll: shouldScroll,
-      shrinkWrap: shrinkWrap,
-      smoothScroll: true,
-      children: children,
-    );
-  }
-
-  /// Implements a smooth version of `ListView.builder()`, mainly for desktop
-  /// usage.
-  ///
-  /// The constructor matches the `ListView.builder()`'s one, with the exact
-  /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation, `enableKeyScrolling` to enable scroll while pressing
-  /// arrow keys and `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollale or not.
-  static Widget builder({
-    Key? key,
-    required Duration duration,
-    required IndexedWidgetBuilder itemBuilder,
-    bool addAutomaticKeepAlives = true,
-    bool addRepaintBoundaries = true,
-    bool addSemanticIndexes = true,
-    Clip clipBehavior = Clip.hardEdge,
-    Curve curve = Curves.easeOutQuart,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    bool enableKeyScrolling = true,
-    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
-        ScrollViewKeyboardDismissBehavior.manual,
-    bool reverse = false,
-    Axis scrollDirection = Axis.vertical,
-    bool shouldScroll = true,
-    bool shrinkWrap = false,
-    double? cacheExtent,
-    ScrollController? controller,
-    ChildIndexGetter? findChildIndexCallback,
-    int? itemCount,
-    double? itemExtent,
-    EdgeInsetsGeometry? padding,
-    ScrollPhysics? physics,
-    bool? primary,
-    Widget? prototypeItem,
-    String? restorationId,
-    int? semanticChildCount,
-  }) {
-    controller = controller ?? ScrollController();
-    return _SmoothListViewBuilder(
       key: key,
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       addRepaintBoundaries: addRepaintBoundaries,
       addSemanticIndexes: addSemanticIndexes,
       cacheExtent: cacheExtent,
       clipBehavior: clipBehavior,
-      controller: controller,
+      controller: newController,
       curve: curve,
       dragStartBehavior: dragStartBehavior,
       duration: duration,
       enableKeyScrolling: enableKeyScrolling,
-      findChildIndexCallback: findChildIndexCallback,
-      itemBuilder: itemBuilder,
-      itemCount: itemCount,
       itemExtent: itemExtent,
       keyboardDismissBehavior: keyboardDismissBehavior,
       padding: padding,
@@ -157,9 +93,10 @@ class SmoothListView extends StatelessWidget {
       reverse: reverse,
       scrollDirection: scrollDirection,
       semanticChildCount: semanticChildCount,
-      shouldScroll: shouldScroll,
       shrinkWrap: shrinkWrap,
-      smoothScroll: true,
+      shouldScroll: shouldScroll,
+      smoothScroll: newSmoothScroll,
+      children: children,
     );
   }
 
@@ -175,7 +112,7 @@ class SmoothListView extends StatelessWidget {
   /// If `smoothScroll` is set, it will be used to determine wether the list
   /// should be animated or not. Otherwise, `smoothScroll` is set to
   /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
-  static Widget adaptiveBuilder({
+  static Widget builder({
     Key? key,
     required Duration duration,
     required IndexedWidgetBuilder itemBuilder,
@@ -239,14 +176,18 @@ class SmoothListView extends StatelessWidget {
     );
   }
 
-  /// Implements a smooth version of `ListView.separated()`, mainly for desktop
-  /// usage.
+  /// In a similar approach than the `Switch.adaptive()` constructor, this
+  /// implements a smooth version of `ListView.separated()`, but adaptive.
   ///
   /// The constructor matches the `ListView.separated()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
   /// the animation, `enableKeyScrolling` to enable scroll while pressing
-  /// arrow keys and `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollale or not.
+  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
+  /// should be scrollale or not and `smoothScroll`.
+  ///
+  /// If `smoothScroll` is set, it will be used to determine wether the list
+  /// should be animated or not. Otherwise, `smoothScroll` is set to
+  /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
   static Widget separated({
     Key? key,
     required Duration duration,
@@ -266,81 +207,6 @@ class SmoothListView extends StatelessWidget {
     Axis scrollDirection = Axis.vertical,
     bool shouldScroll = true,
     bool shrinkWrap = false,
-    double? cacheExtent,
-    ScrollController? controller,
-    ChildIndexGetter? findChildIndexCallback,
-    double? itemExtent,
-    EdgeInsetsGeometry? padding,
-    ScrollPhysics? physics,
-    bool? primary,
-    Widget? prototypeItem,
-    String? restorationId,
-    int? semanticChildCount,
-  }) {
-    controller = controller ?? ScrollController();
-    return _SmoothListViewSeparated(
-      key: key,
-      addAutomaticKeepAlives: addAutomaticKeepAlives,
-      addRepaintBoundaries: addRepaintBoundaries,
-      addSemanticIndexes: addSemanticIndexes,
-      cacheExtent: cacheExtent,
-      clipBehavior: clipBehavior,
-      controller: controller,
-      curve: curve,
-      dragStartBehavior: dragStartBehavior,
-      duration: duration,
-      enableKeyScrolling: enableKeyScrolling,
-      findChildIndexCallback: findChildIndexCallback,
-      itemBuilder: itemBuilder,
-      itemCount: itemCount,
-      itemExtent: itemExtent,
-      keyboardDismissBehavior: keyboardDismissBehavior,
-      padding: padding,
-      physics: physics,
-      primary: primary,
-      prototypeItem: prototypeItem,
-      restorationId: restorationId,
-      reverse: reverse,
-      scrollDirection: scrollDirection,
-      semanticChildCount: semanticChildCount,
-      separatorBuilder: separatorBuilder,
-      shouldScroll: shouldScroll,
-      shrinkWrap: shrinkWrap,
-      smoothScroll: true,
-    );
-  }
-
-  /// In a similar approach than the `Switch.adaptive()` constructor, this
-  /// implements a smooth version of `ListView.separated()`, but adaptive.
-  ///
-  /// The constructor matches the `ListView.separated()`'s one, with the exact
-  /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation, `enableKeyScrolling` to enable scroll while pressing
-  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollale or not and `smoothScroll`.
-  ///
-  /// If `smoothScroll` is set, it will be used to determine wether the list
-  /// should be animated or not. Otherwise, `smoothScroll` is set to
-  /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
-  static Widget adaptiveSeparated({
-    Key? key,
-    required Duration duration,
-    required IndexedWidgetBuilder itemBuilder,
-    required int itemCount,
-    required Widget Function(BuildContext, int) separatorBuilder,
-    bool addAutomaticKeepAlives = true,
-    bool addRepaintBoundaries = true,
-    bool addSemanticIndexes = true,
-    Clip clipBehavior = Clip.hardEdge,
-    Curve curve = Curves.easeOut,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    bool enableKeyScrolling = true,
-    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
-        ScrollViewKeyboardDismissBehavior.manual,
-    bool reverse = false,
-    Axis scrollDirection = Axis.vertical,
-    bool shouldScroll = true,
-    bool shrinkWrap = false,
     bool smoothScroll = true,
     double? cacheExtent,
     ScrollController? controller,
@@ -385,65 +251,6 @@ class SmoothListView extends StatelessWidget {
       shouldScroll: shouldScroll,
       shrinkWrap: shrinkWrap,
       smoothScroll: smoothScroll,
-    );
-  }
-
-  /// Implements a smooth version of `ListView.custom()`, mainly for desktop
-  /// usage.
-  ///
-  /// The constructor matches the `ListView.custom()`'s one, with the exact
-  /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation, `enableKeyScrolling` to enable scroll while pressing
-  /// arrow keys and `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollale or not.
-  static Widget custom({
-    Key? key,
-    required SliverChildDelegate childrenDelegate,
-    required Duration duration,
-    Clip clipBehavior = Clip.hardEdge,
-    Curve curve = Curves.easeOut,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    bool enableKeyScrolling = true,
-    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
-        ScrollViewKeyboardDismissBehavior.manual,
-    bool reverse = false,
-    Axis scrollDirection = Axis.vertical,
-    bool shouldScroll = true,
-    bool shrinkWrap = false,
-    double? cacheExtent,
-    ScrollController? controller,
-    double? itemExtent,
-    EdgeInsetsGeometry? padding,
-    ScrollPhysics? physics,
-    bool? primary,
-    Widget? prototypeItem,
-    String? restorationId,
-    int? semanticChildCount,
-  }) {
-    controller = controller ?? ScrollController();
-    return _SmoothListViewCustom(
-      key: key,
-      cacheExtent: cacheExtent,
-      childrenDelegate: childrenDelegate,
-      clipBehavior: clipBehavior,
-      controller: controller,
-      curve: curve,
-      dragStartBehavior: dragStartBehavior,
-      duration: duration,
-      enableKeyScrolling: enableKeyScrolling,
-      itemExtent: itemExtent,
-      keyboardDismissBehavior: keyboardDismissBehavior,
-      padding: padding,
-      physics: physics,
-      primary: primary,
-      prototypeItem: prototypeItem,
-      restorationId: restorationId,
-      reverse: reverse,
-      scrollDirection: scrollDirection,
-      semanticChildCount: semanticChildCount,
-      shouldScroll: shouldScroll,
-      shrinkWrap: shrinkWrap,
-      smoothScroll: true,
     );
   }
 
@@ -459,7 +266,7 @@ class SmoothListView extends StatelessWidget {
   /// If `smoothScroll` is set, it will be used to determine wether the list
   /// should be animated or not. Otherwise, `smoothScroll` is set to
   /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
-  static Widget adaptiveCustom({
+  static Widget custom({
     Key? key,
     required SliverChildDelegate childrenDelegate,
     required Duration duration,
@@ -510,78 +317,6 @@ class SmoothListView extends StatelessWidget {
       shouldScroll: shouldScroll,
       shrinkWrap: shrinkWrap,
       smoothScroll: smoothScroll,
-    );
-  }
-
-  /// In a similar approach than the `Switch.adaptive()` constructor, this
-  /// implements a smooth version of `ListView()`, but adaptive.
-  ///
-  /// The constructor matches the `ListView()`'s one, with the exact
-  /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation, `enableKeyScrolling` to enable scroll while pressing
-  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollale or not and `smoothScroll`.
-  ///
-  /// If `smoothScroll` is set, it will be used to determine wether the list
-  /// should be animated or not. Otherwise, `smoothScroll` is set to
-  /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
-  static Widget adaptive({
-    Key? key,
-    required List<Widget> children,
-    required Duration duration,
-    bool addAutomaticKeepAlives = true,
-    bool addRepaintBoundaries = true,
-    bool addSemanticIndexes = true,
-    Clip clipBehavior = Clip.hardEdge,
-    Curve curve = Curves.easeOut,
-    DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    bool enableKeyScrolling = true,
-    ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
-        ScrollViewKeyboardDismissBehavior.manual,
-    bool reverse = false,
-    Axis scrollDirection = Axis.vertical,
-    bool shouldScroll = true,
-    bool shrinkWrap = false,
-    bool smoothScroll = true,
-    double? cacheExtent,
-    ScrollController? controller,
-    double? itemExtent,
-    EdgeInsetsGeometry? padding,
-    ScrollPhysics? physics,
-    bool? primary,
-    Widget? prototypeItem,
-    String? restorationId,
-    int? semanticChildCount,
-  }) {
-    smoothScroll = smoothScroll &&
-        (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
-    controller = controller ?? ScrollController();
-    return _SmoothListViewItems(
-      key: key,
-      addAutomaticKeepAlives: addAutomaticKeepAlives,
-      addRepaintBoundaries: addRepaintBoundaries,
-      addSemanticIndexes: addSemanticIndexes,
-      cacheExtent: cacheExtent,
-      clipBehavior: clipBehavior,
-      controller: controller,
-      curve: curve,
-      dragStartBehavior: dragStartBehavior,
-      duration: duration,
-      enableKeyScrolling: enableKeyScrolling,
-      itemExtent: itemExtent,
-      keyboardDismissBehavior: keyboardDismissBehavior,
-      padding: padding,
-      physics: physics,
-      primary: primary,
-      prototypeItem: prototypeItem,
-      restorationId: restorationId,
-      reverse: reverse,
-      scrollDirection: scrollDirection,
-      semanticChildCount: semanticChildCount,
-      shrinkWrap: shrinkWrap,
-      shouldScroll: shouldScroll,
-      smoothScroll: smoothScroll,
-      children: children,
     );
   }
 }

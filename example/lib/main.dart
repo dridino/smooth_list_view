@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
       showPerformanceOverlay: true,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SmoothListView.adaptiveBuilder(
+        body: SmoothListView.builder(
           smoothScroll: smooth,
           scrollDirection: Axis.horizontal,
           duration: const Duration(milliseconds: 400),
