@@ -192,6 +192,7 @@ class SmoothListView extends StatelessWidget {
     Axis scrollDirection = Axis.vertical,
     bool shouldScroll = true,
     bool shrinkWrap = false,
+    bool smoothScroll = true,
     double? cacheExtent,
     ScrollController? controller,
     ChildIndexGetter? findChildIndexCallback,
@@ -203,9 +204,8 @@ class SmoothListView extends StatelessWidget {
     Widget? prototypeItem,
     String? restorationId,
     int? semanticChildCount,
-    bool? smoothScroll,
   }) {
-    smoothScroll = smoothScroll ??
+    smoothScroll = smoothScroll &&
         (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
     controller = controller ?? ScrollController();
     return _SmoothListViewBuilder(
@@ -341,6 +341,7 @@ class SmoothListView extends StatelessWidget {
     Axis scrollDirection = Axis.vertical,
     bool shouldScroll = true,
     bool shrinkWrap = false,
+    bool smoothScroll = true,
     double? cacheExtent,
     ScrollController? controller,
     ChildIndexGetter? findChildIndexCallback,
@@ -351,9 +352,8 @@ class SmoothListView extends StatelessWidget {
     Widget? prototypeItem,
     String? restorationId,
     int? semanticChildCount,
-    bool? smoothScroll,
   }) {
-    smoothScroll = smoothScroll ??
+    smoothScroll = smoothScroll &&
         (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
     controller = controller ?? ScrollController();
     return _SmoothListViewSeparated(
@@ -473,6 +473,7 @@ class SmoothListView extends StatelessWidget {
     Axis scrollDirection = Axis.vertical,
     bool shouldScroll = true,
     bool shrinkWrap = false,
+    bool smoothScroll = true,
     double? cacheExtent,
     ScrollController? controller,
     double? itemExtent,
@@ -482,9 +483,8 @@ class SmoothListView extends StatelessWidget {
     Widget? prototypeItem,
     String? restorationId,
     int? semanticChildCount,
-    bool? smoothScroll,
   }) {
-    smoothScroll = smoothScroll ??
+    smoothScroll = smoothScroll &&
         (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
     controller = controller ?? ScrollController();
     return _SmoothListViewCustom(
@@ -542,6 +542,7 @@ class SmoothListView extends StatelessWidget {
     Axis scrollDirection = Axis.vertical,
     bool shouldScroll = true,
     bool shrinkWrap = false,
+    bool smoothScroll = true,
     double? cacheExtent,
     ScrollController? controller,
     double? itemExtent,
@@ -551,9 +552,8 @@ class SmoothListView extends StatelessWidget {
     Widget? prototypeItem,
     String? restorationId,
     int? semanticChildCount,
-    bool? smoothScroll,
   }) {
-    smoothScroll = smoothScroll ??
+    smoothScroll = smoothScroll &&
         (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
     controller = controller ?? ScrollController();
     return _SmoothListViewItems(

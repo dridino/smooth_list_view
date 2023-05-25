@@ -17,22 +17,6 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool smooth = false;
 
-  // We define a controller here to keep the same scroll offset while
-  // switching between the classic version and the animated version
-  late ScrollController controller;
-
-  @override
-  void initState() {
-    controller = ScrollController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,12 +24,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: SmoothListView.adaptiveBuilder(
-          controller: controller,
           smoothScroll: smooth,
           scrollDirection: Axis.vertical,
           duration: const Duration(milliseconds: 400),
-          physics: const BouncingScrollPhysics(),
-          itemCount: 50,
           itemBuilder: (ctx, idx) {
             return Container(
               height: 200,
