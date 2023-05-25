@@ -4,11 +4,11 @@ A flutter plugin to implement smooth scrolling on desktop and web.
 
 ### Without
 
-<img src="assets/without.gif" alt="without the package" width=200, height=356>
+<img src="https://github.com/dridino/smooth_list_view/blob/main/assets/without.gif" alt="without the package" width=200, height=356>
 
 ### With
 
-<img src="assets/with.gif" alt="with the package" width=200, height=356>
+<img src="https://github.com/dridino/smooth_list_view/blob/main/assets/with.gif" alt="with the package" width=200, height=356>
 
 ## Features
 
