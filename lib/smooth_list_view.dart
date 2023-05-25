@@ -711,16 +711,20 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
       },
       child: Listener(
         onPointerPanZoomUpdate: (event) {
-          updatePos(-event.panDelta.dy * 2);
+          if (widget.smoothScroll) {
+            updatePos((widget.scrollDirection == Axis.vertical
+                    ? -event.panDelta.dy
+                    : -event.panDelta.dx) *
+                2);
+          }
         },
         onPointerSignal: (PointerSignalEvent event) {
-          if (widget.shouldScroll) {
-            if (event is PointerScrollEvent && widget.smoothScroll) {
-              updatePos(event.scrollDelta.dy);
-            }
-          }
-          if (event is PointerScrollEvent && !widget.smoothScroll) {
+          if (event is PointerScrollEvent) {
             updatePos(event.scrollDelta.dy);
+            if (!widget.smoothScroll) {
+              widget.controller
+                  .jumpTo(widget.controller.offset + event.scrollDelta.dy);
+            }
           }
         },
         child: ListView.builder(

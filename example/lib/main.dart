@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         body: SmoothListView.adaptiveBuilder(
           smoothScroll: smooth,
-          scrollDirection: Axis.vertical,
+          scrollDirection: Axis.horizontal,
           duration: const Duration(milliseconds: 400),
           itemBuilder: (ctx, idx) {
             return Container(
