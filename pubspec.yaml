@@ -1,6 +1,6 @@
 name: smooth_list_view
 description: ListView constructors that implement smooth scrolling when using a mouse.
-version: 1.0.3
+version: 1.0.4
 repository: https://github.com/dridino/smooth_list_view
 issue_tracker: https://github.com/dridino/smooth_list_view/issues
 
