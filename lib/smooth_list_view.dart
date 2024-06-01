@@ -39,7 +39,7 @@ class SmoothListView extends StatelessWidget {
   final bool smoothScroll;
 
   const SmoothListView({
-    Key? key,
+    super.key,
     required this.children,
     required this.duration,
     this.addAutomaticKeepAlives = true,
@@ -64,7 +64,7 @@ class SmoothListView extends StatelessWidget {
     this.prototypeItem,
     this.restorationId,
     this.semanticChildCount,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -350,7 +350,7 @@ class _SmoothListViewBuilder extends StatefulWidget {
   final bool smoothScroll;
 
   const _SmoothListViewBuilder({
-    Key? key,
+    super.key,
     required this.addAutomaticKeepAlives,
     required this.addRepaintBoundaries,
     required this.addSemanticIndexes,
@@ -377,7 +377,7 @@ class _SmoothListViewBuilder extends StatefulWidget {
     this.prototypeItem,
     this.restorationId,
     this.semanticChildCount,
-  }) : super(key: key);
+  });
 
   @override
   State<_SmoothListViewBuilder> createState() => _SmoothListViewBuilderState();
@@ -417,14 +417,14 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
           .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
     }
 
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: FocusNode(),
       autofocus: true,
-      onKey: (event) {
+      onKeyEvent: (event) {
         if (widget.enableKeyScrolling) {
-          if ((event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
+          if ((event.logicalKey == LogicalKeyboardKey.arrowDown &&
                   widget.scrollDirection == Axis.vertical) ||
-              (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &&
+              (event.logicalKey == LogicalKeyboardKey.arrowRight &&
                   widget.scrollDirection == Axis.horizontal)) {
             if (!widget.smoothScroll) {
               widget.controller.jumpTo(math.min(
@@ -432,9 +432,9 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
                   widget.controller.offset + 111.0));
             }
             updatePos(111.0);
-          } else if ((event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
+          } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
                   widget.scrollDirection == Axis.vertical) ||
-              (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
+              (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
                   widget.scrollDirection == Axis.horizontal)) {
             if (!widget.smoothScroll) {
               widget.controller
@@ -522,7 +522,7 @@ class _SmoothListViewSeparated extends StatefulWidget {
   final bool smoothScroll;
 
   const _SmoothListViewSeparated({
-    Key? key,
+    super.key,
     required this.addAutomaticKeepAlives,
     required this.addRepaintBoundaries,
     required this.addSemanticIndexes,
@@ -550,7 +550,7 @@ class _SmoothListViewSeparated extends StatefulWidget {
     this.prototypeItem,
     this.restorationId,
     this.semanticChildCount,
-  }) : super(key: key);
+  });
 
   @override
   State<_SmoothListViewSeparated> createState() =>
@@ -590,14 +590,14 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
       widget.controller
           .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
     }
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: FocusNode(),
       autofocus: true,
-      onKey: (event) {
+      onKeyEvent: (event) {
         if (widget.enableKeyScrolling) {
-          if ((event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
+          if ((event.logicalKey == LogicalKeyboardKey.arrowDown &&
                   widget.scrollDirection == Axis.vertical) ||
-              (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &&
+              (event.logicalKey == LogicalKeyboardKey.arrowRight &&
                   widget.scrollDirection == Axis.horizontal)) {
             if (!widget.smoothScroll) {
               widget.controller.jumpTo(math.min(
@@ -605,9 +605,9 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
                   widget.controller.offset + 111.0));
             }
             updatePos(111.0);
-          } else if ((event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
+          } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
                   widget.scrollDirection == Axis.vertical) ||
-              (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
+              (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
                   widget.scrollDirection == Axis.horizontal)) {
             if (!widget.smoothScroll) {
               widget.controller
@@ -690,7 +690,7 @@ class _SmoothListViewItems extends StatefulWidget {
   final bool smoothScroll;
 
   const _SmoothListViewItems({
-    Key? key,
+    super.key,
     required this.addAutomaticKeepAlives,
     required this.addRepaintBoundaries,
     required this.addSemanticIndexes,
@@ -715,7 +715,7 @@ class _SmoothListViewItems extends StatefulWidget {
     this.primary,
     this.prototypeItem,
     this.semanticChildCount,
-  }) : super(key: key);
+  });
 
   @override
   State<_SmoothListViewItems> createState() => _SmoothListViewItemsState();
@@ -754,14 +754,14 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
       widget.controller
           .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
     }
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: FocusNode(),
       autofocus: true,
-      onKey: (event) {
+      onKeyEvent: (event) {
         if (widget.enableKeyScrolling) {
-          if ((event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
+          if ((event.logicalKey == LogicalKeyboardKey.arrowDown &&
                   widget.scrollDirection == Axis.vertical) ||
-              (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &&
+              (event.logicalKey == LogicalKeyboardKey.arrowRight &&
                   widget.scrollDirection == Axis.horizontal)) {
             if (!widget.smoothScroll) {
               widget.controller.jumpTo(math.min(
@@ -769,9 +769,9 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
                   widget.controller.offset + 111.0));
             }
             updatePos(111.0);
-          } else if ((event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
+          } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
                   widget.scrollDirection == Axis.vertical) ||
-              (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
+              (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
                   widget.scrollDirection == Axis.horizontal)) {
             if (!widget.smoothScroll) {
               widget.controller
@@ -851,7 +851,7 @@ class _SmoothListViewCustom extends StatefulWidget {
   final bool smoothScroll;
 
   const _SmoothListViewCustom({
-    Key? key,
+    super.key,
     required this.childrenDelegate,
     required this.clipBehavior,
     required this.controller,
@@ -873,7 +873,7 @@ class _SmoothListViewCustom extends StatefulWidget {
     this.prototypeItem,
     this.restorationId,
     this.semanticChildCount,
-  }) : super(key: key);
+  });
 
   @override
   State<_SmoothListViewCustom> createState() => _SmoothListViewCustomState();
@@ -912,14 +912,14 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
       widget.controller
           .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
     }
-    return RawKeyboardListener(
+    return KeyboardListener(
       focusNode: FocusNode(),
       autofocus: true,
-      onKey: (event) {
+      onKeyEvent: (event) {
         if (widget.enableKeyScrolling) {
-          if ((event.isKeyPressed(LogicalKeyboardKey.arrowDown) &&
+          if ((event.logicalKey == LogicalKeyboardKey.arrowDown &&
                   widget.scrollDirection == Axis.vertical) ||
-              (event.isKeyPressed(LogicalKeyboardKey.arrowRight) &&
+              (event.logicalKey == LogicalKeyboardKey.arrowRight &&
                   widget.scrollDirection == Axis.horizontal)) {
             if (!widget.smoothScroll) {
               widget.controller.jumpTo(math.min(
@@ -927,9 +927,9 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
                   widget.controller.offset + 111.0));
             }
             updatePos(111.0);
-          } else if ((event.isKeyPressed(LogicalKeyboardKey.arrowUp) &&
+          } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
                   widget.scrollDirection == Axis.vertical) ||
-              (event.isKeyPressed(LogicalKeyboardKey.arrowLeft) &&
+              (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
                   widget.scrollDirection == Axis.horizontal)) {
             if (!widget.smoothScroll) {
               widget.controller

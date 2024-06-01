@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
       home: Scaffold(
         body: SmoothListView.builder(
           smoothScroll: smooth,
-          duration: const Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: 200),
           itemBuilder: (ctx, idx) {
             return Container(
               height: 200,
