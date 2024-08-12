@@ -1,3 +1,5 @@
+# 1.0.6
+* fixed a bug where you couldn't use a `Scrollbar` to scroll when `smooth` attribute was set to `true`.
 # 1.0.5
 * updated dependencies and solved issues regarding deprecated code
 # 1.0.4

@@ -407,6 +407,10 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
     });
   }
 
+  Widget wrapAbsorbPointer({required bool pred, required Widget child}) {
+    return pred ? AbsorbPointer(child: child) : child;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.shouldScroll &&
@@ -462,30 +466,31 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
             }
           }
         },
-        child: ListView.builder(
-          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-          addRepaintBoundaries: widget.addRepaintBoundaries,
-          addSemanticIndexes: widget.addSemanticIndexes,
-          cacheExtent: widget.cacheExtent,
-          clipBehavior: widget.clipBehavior,
-          controller: widget.controller,
-          dragStartBehavior: widget.dragStartBehavior,
-          findChildIndexCallback: widget.findChildIndexCallback,
-          itemBuilder: widget.itemBuilder,
-          itemCount: widget.itemCount,
-          itemExtent: widget.itemExtent,
-          keyboardDismissBehavior: widget.keyboardDismissBehavior,
-          padding: widget.padding,
-          physics: widget.smoothScroll || !widget.shouldScroll
-              ? const NeverScrollableScrollPhysics()
-              : widget.physics,
-          primary: widget.primary,
-          prototypeItem: widget.prototypeItem,
-          restorationId: widget.restorationId,
-          reverse: widget.reverse,
-          scrollDirection: widget.scrollDirection,
-          semanticChildCount: widget.semanticChildCount,
-          shrinkWrap: widget.shrinkWrap,
+        child: wrapAbsorbPointer(
+          pred: widget.smoothScroll || !widget.shouldScroll,
+          child: ListView.builder(
+            addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+            addRepaintBoundaries: widget.addRepaintBoundaries,
+            addSemanticIndexes: widget.addSemanticIndexes,
+            cacheExtent: widget.cacheExtent,
+            clipBehavior: widget.clipBehavior,
+            controller: widget.controller,
+            dragStartBehavior: widget.dragStartBehavior,
+            findChildIndexCallback: widget.findChildIndexCallback,
+            itemBuilder: widget.itemBuilder,
+            itemCount: widget.itemCount,
+            itemExtent: widget.itemExtent,
+            keyboardDismissBehavior: widget.keyboardDismissBehavior,
+            padding: widget.padding,
+            physics: widget.physics,
+            primary: widget.primary,
+            prototypeItem: widget.prototypeItem,
+            restorationId: widget.restorationId,
+            reverse: widget.reverse,
+            scrollDirection: widget.scrollDirection,
+            semanticChildCount: widget.semanticChildCount,
+            shrinkWrap: widget.shrinkWrap,
+          ),
         ),
       ),
     );
@@ -581,6 +586,10 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
     });
   }
 
+  Widget wrapAbsorbPointer({required bool pred, required Widget child}) {
+    return pred ? AbsorbPointer(child: child) : child;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.shouldScroll &&
@@ -635,28 +644,29 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
             }
           }
         },
-        child: ListView.separated(
-          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-          addRepaintBoundaries: widget.addRepaintBoundaries,
-          addSemanticIndexes: widget.addSemanticIndexes,
-          cacheExtent: widget.cacheExtent,
-          clipBehavior: widget.clipBehavior,
-          controller: widget.controller,
-          dragStartBehavior: widget.dragStartBehavior,
-          findChildIndexCallback: widget.findChildIndexCallback,
-          itemBuilder: widget.itemBuilder,
-          itemCount: widget.itemCount,
-          keyboardDismissBehavior: widget.keyboardDismissBehavior,
-          padding: widget.padding,
-          physics: widget.smoothScroll || !widget.shouldScroll
-              ? const NeverScrollableScrollPhysics()
-              : widget.physics,
-          primary: widget.primary,
-          restorationId: widget.restorationId,
-          reverse: widget.reverse,
-          scrollDirection: widget.scrollDirection,
-          separatorBuilder: widget.separatorBuilder,
-          shrinkWrap: widget.shrinkWrap,
+        child: wrapAbsorbPointer(
+          pred: widget.smoothScroll || !widget.shouldScroll,
+          child: ListView.separated(
+            addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+            addRepaintBoundaries: widget.addRepaintBoundaries,
+            addSemanticIndexes: widget.addSemanticIndexes,
+            cacheExtent: widget.cacheExtent,
+            clipBehavior: widget.clipBehavior,
+            controller: widget.controller,
+            dragStartBehavior: widget.dragStartBehavior,
+            findChildIndexCallback: widget.findChildIndexCallback,
+            itemBuilder: widget.itemBuilder,
+            itemCount: widget.itemCount,
+            keyboardDismissBehavior: widget.keyboardDismissBehavior,
+            padding: widget.padding,
+            physics: widget.physics,
+            primary: widget.primary,
+            restorationId: widget.restorationId,
+            reverse: widget.reverse,
+            scrollDirection: widget.scrollDirection,
+            separatorBuilder: widget.separatorBuilder,
+            shrinkWrap: widget.shrinkWrap,
+          ),
         ),
       ),
     );
@@ -745,6 +755,10 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
     });
   }
 
+  Widget wrapAbsorbPointer({required bool pred, required Widget child}) {
+    return pred ? AbsorbPointer(child: child) : child;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.shouldScroll &&
@@ -799,28 +813,29 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
             }
           }
         },
-        child: ListView(
-          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-          addRepaintBoundaries: widget.addRepaintBoundaries,
-          addSemanticIndexes: widget.addSemanticIndexes,
-          cacheExtent: widget.cacheExtent,
-          clipBehavior: widget.clipBehavior,
-          controller: widget.controller,
-          dragStartBehavior: widget.dragStartBehavior,
-          itemExtent: widget.itemExtent,
-          keyboardDismissBehavior: widget.keyboardDismissBehavior,
-          padding: widget.padding,
-          physics: widget.smoothScroll || !widget.shouldScroll
-              ? const NeverScrollableScrollPhysics()
-              : widget.physics,
-          primary: widget.primary,
-          prototypeItem: widget.prototypeItem,
-          restorationId: widget.restorationId,
-          reverse: widget.reverse,
-          scrollDirection: widget.scrollDirection,
-          semanticChildCount: widget.semanticChildCount,
-          shrinkWrap: widget.shrinkWrap,
-          children: widget.children,
+        child: wrapAbsorbPointer(
+          pred: widget.smoothScroll || !widget.shouldScroll,
+          child: ListView(
+            addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+            addRepaintBoundaries: widget.addRepaintBoundaries,
+            addSemanticIndexes: widget.addSemanticIndexes,
+            cacheExtent: widget.cacheExtent,
+            clipBehavior: widget.clipBehavior,
+            controller: widget.controller,
+            dragStartBehavior: widget.dragStartBehavior,
+            itemExtent: widget.itemExtent,
+            keyboardDismissBehavior: widget.keyboardDismissBehavior,
+            padding: widget.padding,
+            physics: widget.physics,
+            primary: widget.primary,
+            prototypeItem: widget.prototypeItem,
+            restorationId: widget.restorationId,
+            reverse: widget.reverse,
+            scrollDirection: widget.scrollDirection,
+            semanticChildCount: widget.semanticChildCount,
+            shrinkWrap: widget.shrinkWrap,
+            children: widget.children,
+          ),
         ),
       ),
     );
@@ -903,6 +918,10 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
     });
   }
 
+  Widget wrapAbsorbPointer({required bool pred, required Widget child}) {
+    return pred ? AbsorbPointer(child: child) : child;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.shouldScroll &&
@@ -957,25 +976,26 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
             }
           }
         },
-        child: ListView.custom(
-          cacheExtent: widget.cacheExtent,
-          childrenDelegate: widget.childrenDelegate,
-          clipBehavior: widget.clipBehavior,
-          controller: widget.controller,
-          dragStartBehavior: widget.dragStartBehavior,
-          itemExtent: widget.itemExtent,
-          keyboardDismissBehavior: widget.keyboardDismissBehavior,
-          padding: widget.padding,
-          physics: widget.smoothScroll || !widget.shouldScroll
-              ? const NeverScrollableScrollPhysics()
-              : widget.physics,
-          primary: widget.primary,
-          prototypeItem: widget.prototypeItem,
-          restorationId: widget.restorationId,
-          reverse: widget.reverse,
-          scrollDirection: widget.scrollDirection,
-          semanticChildCount: widget.semanticChildCount,
-          shrinkWrap: widget.shrinkWrap,
+        child: wrapAbsorbPointer(
+          pred: widget.smoothScroll || !widget.shouldScroll,
+          child: ListView.custom(
+            cacheExtent: widget.cacheExtent,
+            childrenDelegate: widget.childrenDelegate,
+            clipBehavior: widget.clipBehavior,
+            controller: widget.controller,
+            dragStartBehavior: widget.dragStartBehavior,
+            itemExtent: widget.itemExtent,
+            keyboardDismissBehavior: widget.keyboardDismissBehavior,
+            padding: widget.padding,
+            physics: widget.physics,
+            primary: widget.primary,
+            prototypeItem: widget.prototypeItem,
+            restorationId: widget.restorationId,
+            reverse: widget.reverse,
+            scrollDirection: widget.scrollDirection,
+            semanticChildCount: widget.semanticChildCount,
+            shrinkWrap: widget.shrinkWrap,
+          ),
         ),
       ),
     );

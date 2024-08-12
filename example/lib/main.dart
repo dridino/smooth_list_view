@@ -16,6 +16,19 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool smooth = false;
+  late ScrollController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = ScrollController();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +36,31 @@ class _MyAppState extends State<MyApp> {
       showPerformanceOverlay: false,
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        body: SmoothListView.builder(
-          smoothScroll: smooth,
-          duration: const Duration(milliseconds: 200),
-          itemBuilder: (ctx, idx) {
-            return Container(
-              height: 200,
-              width: 200,
-              color: colorList[idx % colorList.length],
+        body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return Center(
+              child: SizedBox(
+                width: constraints.maxWidth * 0.8,
+                height: constraints.maxHeight * 0.8,
+                child: Scrollbar(
+                  controller: controller,
+                  thumbVisibility: true,
+                  child: SmoothListView.builder(
+                    smoothScroll: smooth,
+                    duration: const Duration(milliseconds: 200),
+                    controller: controller,
+                    itemCount: 20,
+                    itemBuilder: (ctx, idx) {
+                      return Container(
+                        height: 200,
+                        width: 200,
+                        color: colorList[idx % colorList.length],
+                        child: Center(child: Text("$idx")),
+                      );
+                    },
+                  ),
+                ),
+              ),
             );
           },
         ),
@@ -44,5 +74,18 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+}
+
+class NoScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildScrollbar(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
+  }
+
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return const BouncingScrollPhysics(); // Disable scrolling physics
   }
 }
