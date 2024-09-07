@@ -68,10 +68,11 @@ class SmoothListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool newSmoothScroll = smoothScroll &&
-        (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+    final bool isDesktop =
+        kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    final bool newSmoothScroll = smoothScroll && isDesktop;
     final ScrollController newController = controller ?? ScrollController();
-    return _SmoothListViewItems(
+    final Widget child = _SmoothListViewItems(
       key: key,
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       addRepaintBoundaries: addRepaintBoundaries,
@@ -98,6 +99,9 @@ class SmoothListView extends StatelessWidget {
       smoothScroll: newSmoothScroll,
       children: children,
     );
+    return newSmoothScroll
+        ? Scrollbar(controller: controller, child: child)
+        : child;
   }
 
   /// In a similar approach than the `Switch.adaptive()` constructor, this
@@ -142,10 +146,11 @@ class SmoothListView extends StatelessWidget {
     String? restorationId,
     int? semanticChildCount,
   }) {
-    smoothScroll = smoothScroll &&
-        (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+    final bool isDesktop =
+        kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    smoothScroll = smoothScroll && isDesktop;
     controller = controller ?? ScrollController();
-    return _SmoothListViewBuilder(
+    final Widget child = _SmoothListViewBuilder(
       key: key,
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       addRepaintBoundaries: addRepaintBoundaries,
@@ -174,6 +179,9 @@ class SmoothListView extends StatelessWidget {
       shrinkWrap: shrinkWrap,
       smoothScroll: smoothScroll,
     );
+    return smoothScroll
+        ? Scrollbar(controller: controller, child: child)
+        : child;
   }
 
   /// In a similar approach than the `Switch.adaptive()` constructor, this
@@ -219,10 +227,11 @@ class SmoothListView extends StatelessWidget {
     String? restorationId,
     int? semanticChildCount,
   }) {
-    smoothScroll = smoothScroll &&
-        (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+    final bool isDesktop =
+        kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    smoothScroll = smoothScroll && isDesktop;
     controller = controller ?? ScrollController();
-    return _SmoothListViewSeparated(
+    final Widget child = _SmoothListViewSeparated(
       key: key,
       addAutomaticKeepAlives: addAutomaticKeepAlives,
       addRepaintBoundaries: addRepaintBoundaries,
@@ -252,6 +261,9 @@ class SmoothListView extends StatelessWidget {
       shrinkWrap: shrinkWrap,
       smoothScroll: smoothScroll,
     );
+    return smoothScroll
+        ? Scrollbar(controller: controller, child: child)
+        : child;
   }
 
   /// In a similar approach than the `Switch.adaptive()` constructor, this
@@ -291,10 +303,11 @@ class SmoothListView extends StatelessWidget {
     String? restorationId,
     int? semanticChildCount,
   }) {
-    smoothScroll = smoothScroll &&
-        (kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS);
+    final bool isDesktop =
+        kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    smoothScroll = smoothScroll && isDesktop;
     controller = controller ?? ScrollController();
-    return _SmoothListViewCustom(
+    final Widget child = _SmoothListViewCustom(
       key: key,
       cacheExtent: cacheExtent,
       childrenDelegate: childrenDelegate,
@@ -318,6 +331,9 @@ class SmoothListView extends StatelessWidget {
       shrinkWrap: shrinkWrap,
       smoothScroll: smoothScroll,
     );
+    return smoothScroll
+        ? Scrollbar(controller: controller, child: child)
+        : child;
   }
 }
 
@@ -385,12 +401,16 @@ class _SmoothListViewBuilder extends StatefulWidget {
 
 class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
   double targetPos = 0.0;
+  bool scrollBarScroll = true;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(() {
-      if (!widget.smoothScroll) {
+      if (widget.controller.offset == targetPos) {
+        scrollBarScroll = true;
+      }
+      if (!widget.smoothScroll || scrollBarScroll) {
         targetPos = widget.controller.offset;
       }
     });
@@ -398,6 +418,7 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
 
   void updatePos(double v) {
     setState(() {
+      scrollBarScroll = false;
       if (v < 0) {
         targetPos = math.max(0.0, targetPos + v);
       } else {
@@ -564,12 +585,16 @@ class _SmoothListViewSeparated extends StatefulWidget {
 
 class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
   double targetPos = 0.0;
+  bool scrollBarScroll = true;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(() {
-      if (!widget.smoothScroll) {
+      if (widget.controller.offset == targetPos) {
+        scrollBarScroll = true;
+      }
+      if (!widget.smoothScroll || scrollBarScroll) {
         targetPos = widget.controller.offset;
       }
     });
@@ -577,11 +602,9 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
 
   void updatePos(double v) {
     setState(() {
-      if (v < 0) {
-        targetPos = math.max(0.0, targetPos + v);
-      } else {
-        targetPos =
-            math.min(widget.controller.position.maxScrollExtent, targetPos + v);
+      scrollBarScroll = false;
+      if (!widget.smoothScroll) {
+        targetPos = widget.controller.offset;
       }
     });
   }
@@ -734,11 +757,16 @@ class _SmoothListViewItems extends StatefulWidget {
 class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
   double targetPos = 0.0;
 
+  bool scrollBarScroll = true;
+
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(() {
-      if (!widget.smoothScroll) {
+      if (widget.controller.offset == targetPos) {
+        scrollBarScroll = true;
+      }
+      if (!widget.smoothScroll || scrollBarScroll) {
         targetPos = widget.controller.offset;
       }
     });
@@ -746,6 +774,7 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
 
   void updatePos(double v) {
     setState(() {
+      scrollBarScroll = false;
       if (v < 0) {
         targetPos = math.max(0.0, targetPos + v);
       } else {
@@ -896,12 +925,16 @@ class _SmoothListViewCustom extends StatefulWidget {
 
 class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
   double targetPos = 0.0;
+  bool scrollBarScroll = true;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(() {
-      if (!widget.smoothScroll) {
+      if (widget.controller.offset == targetPos) {
+        scrollBarScroll = true;
+      }
+      if (!widget.smoothScroll || scrollBarScroll) {
         targetPos = widget.controller.offset;
       }
     });
@@ -909,6 +942,7 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
 
   void updatePos(double v) {
     setState(() {
+      scrollBarScroll = false;
       if (v < 0) {
         targetPos = math.max(0.0, targetPos + v);
       } else {

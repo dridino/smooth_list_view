@@ -42,23 +42,19 @@ class _MyAppState extends State<MyApp> {
               child: SizedBox(
                 width: constraints.maxWidth * 0.8,
                 height: constraints.maxHeight * 0.8,
-                child: Scrollbar(
+                child: SmoothListView.builder(
+                  smoothScroll: smooth,
+                  duration: const Duration(milliseconds: 200),
                   controller: controller,
-                  thumbVisibility: true,
-                  child: SmoothListView.builder(
-                    smoothScroll: smooth,
-                    duration: const Duration(milliseconds: 200),
-                    controller: controller,
-                    itemCount: 20,
-                    itemBuilder: (ctx, idx) {
-                      return Container(
-                        height: 200,
-                        width: 200,
-                        color: colorList[idx % colorList.length],
-                        child: Center(child: Text("$idx")),
-                      );
-                    },
-                  ),
+                  itemCount: 20,
+                  itemBuilder: (ctx, idx) {
+                    return Container(
+                      height: 200,
+                      width: 200,
+                      color: colorList[idx % colorList.length],
+                      child: Center(child: Text("$idx")),
+                    );
+                  },
                 ),
               ),
             );
@@ -74,18 +70,5 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
-  }
-}
-
-class NoScrollBehavior extends ScrollBehavior {
-  @override
-  Widget buildScrollbar(
-      BuildContext context, Widget child, ScrollableDetails details) {
-    return child;
-  }
-
-  @override
-  ScrollPhysics getScrollPhysics(BuildContext context) {
-    return const BouncingScrollPhysics(); // Disable scrolling physics
   }
 }
