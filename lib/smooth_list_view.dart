@@ -111,7 +111,7 @@ class SmoothListView extends StatelessWidget {
   /// same parameters, except for `curve` and `duration` used to customize
   /// the animation, `enableKeyScrolling` to enable scroll while pressing
   /// arrow keys, `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollale or not and `smoothScroll`.
+  /// should be scrollable or not and `smoothScroll`.
   ///
   /// If `smoothScroll` is set, it will be used to determine wether the list
   /// should be animated or not. Otherwise, `smoothScroll` is set to
@@ -191,7 +191,7 @@ class SmoothListView extends StatelessWidget {
   /// same parameters, except for `curve` and `duration` used to customize
   /// the animation, `enableKeyScrolling` to enable scroll while pressing
   /// arrow keys, `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollale or not and `smoothScroll`.
+  /// should be scrollable or not and `smoothScroll`.
   ///
   /// If `smoothScroll` is set, it will be used to determine wether the list
   /// should be animated or not. Otherwise, `smoothScroll` is set to
@@ -273,7 +273,7 @@ class SmoothListView extends StatelessWidget {
   /// same parameters, except for `curve` and `duration` used to customize
   /// the animation, `enableKeyScrolling` to enable scroll while pressing
   /// arrow keys, `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollale or not and `smoothScroll`.
+  /// should be scrollable or not and `smoothScroll`.
   ///
   /// If `smoothScroll` is set, it will be used to determine wether the list
   /// should be animated or not. Otherwise, `smoothScroll` is set to
@@ -401,16 +401,13 @@ class _SmoothListViewBuilder extends StatefulWidget {
 
 class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
   double targetPos = 0.0;
-  bool scrollBarScroll = true;
+  bool isAnimating = false;
 
   @override
   void initState() {
     super.initState();
     widget.controller.addListener(() {
-      if (widget.controller.offset == targetPos) {
-        scrollBarScroll = true;
-      }
-      if (!widget.smoothScroll || scrollBarScroll) {
+      if (!widget.smoothScroll) {
         targetPos = widget.controller.offset;
       }
     });
@@ -418,7 +415,6 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
 
   void updatePos(double v) {
     setState(() {
-      scrollBarScroll = false;
       if (v < 0) {
         targetPos = math.max(0.0, targetPos + v);
       } else {
@@ -426,6 +422,16 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
             math.min(widget.controller.position.maxScrollExtent, targetPos + v);
       }
     });
+    if (!isAnimating && widget.controller.offset != targetPos) {
+      setState(() {
+        isAnimating = true;
+      });
+      widget.controller
+          .animateTo(targetPos, duration: widget.duration, curve: widget.curve)
+          .then((_) => setState(() {
+                isAnimating = false;
+              }));
+    }
   }
 
   Widget wrapAbsorbPointer({required bool pred, required Widget child}) {
@@ -434,13 +440,13 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.shouldScroll &&
+    /* if (widget.shouldScroll &&
         widget.smoothScroll &&
         widget.controller.hasClients &&
         targetPos != widget.controller.offset) {
       widget.controller
           .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
-    }
+    } */
 
     return KeyboardListener(
       focusNode: FocusNode(),
@@ -451,67 +457,61 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
                   widget.scrollDirection == Axis.vertical) ||
               (event.logicalKey == LogicalKeyboardKey.arrowRight &&
                   widget.scrollDirection == Axis.horizontal)) {
+            double dest = math.min(widget.controller.position.maxScrollExtent,
+                widget.controller.offset + 111.0);
             if (!widget.smoothScroll) {
-              widget.controller.jumpTo(math.min(
-                  widget.controller.position.maxScrollExtent,
-                  widget.controller.offset + 111.0));
+              widget.controller.jumpTo(dest);
             }
-            updatePos(111.0);
+            updatePos(dest - widget.controller.offset);
           } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
                   widget.scrollDirection == Axis.vertical) ||
               (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
                   widget.scrollDirection == Axis.horizontal)) {
+            double dest = math.max(0.0, widget.controller.offset - 111.0);
             if (!widget.smoothScroll) {
-              widget.controller
-                  .jumpTo(math.max(0.0, widget.controller.offset - 111.0));
+              widget.controller.jumpTo(dest);
             }
-            updatePos(-111.0);
+            updatePos(dest - widget.controller.offset);
           }
         }
       },
       child: Listener(
         onPointerPanZoomUpdate: (event) {
-          if (widget.smoothScroll) {
-            updatePos((widget.scrollDirection == Axis.vertical
-                    ? -event.panDelta.dy
-                    : -event.panDelta.dx) *
-                2);
-          }
+          updatePos(widget.scrollDirection == Axis.vertical
+              ? -event.panDelta.dy
+              : -event.panDelta.dx);
         },
         onPointerSignal: (PointerSignalEvent event) {
           if (event is PointerScrollEvent) {
             updatePos(event.scrollDelta.dy);
-            if (!widget.smoothScroll) {
+            if (widget.smoothScroll) {
               widget.controller
-                  .jumpTo(widget.controller.offset + event.scrollDelta.dy);
+                  .jumpTo(widget.controller.offset - event.scrollDelta.dy);
             }
           }
         },
-        child: wrapAbsorbPointer(
-          pred: widget.smoothScroll || !widget.shouldScroll,
-          child: ListView.builder(
-            addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-            addRepaintBoundaries: widget.addRepaintBoundaries,
-            addSemanticIndexes: widget.addSemanticIndexes,
-            cacheExtent: widget.cacheExtent,
-            clipBehavior: widget.clipBehavior,
-            controller: widget.controller,
-            dragStartBehavior: widget.dragStartBehavior,
-            findChildIndexCallback: widget.findChildIndexCallback,
-            itemBuilder: widget.itemBuilder,
-            itemCount: widget.itemCount,
-            itemExtent: widget.itemExtent,
-            keyboardDismissBehavior: widget.keyboardDismissBehavior,
-            padding: widget.padding,
-            physics: widget.physics,
-            primary: widget.primary,
-            prototypeItem: widget.prototypeItem,
-            restorationId: widget.restorationId,
-            reverse: widget.reverse,
-            scrollDirection: widget.scrollDirection,
-            semanticChildCount: widget.semanticChildCount,
-            shrinkWrap: widget.shrinkWrap,
-          ),
+        child: ListView.builder(
+          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+          addRepaintBoundaries: widget.addRepaintBoundaries,
+          addSemanticIndexes: widget.addSemanticIndexes,
+          cacheExtent: widget.cacheExtent,
+          clipBehavior: widget.clipBehavior,
+          controller: widget.controller,
+          dragStartBehavior: widget.dragStartBehavior,
+          findChildIndexCallback: widget.findChildIndexCallback,
+          itemBuilder: widget.itemBuilder,
+          itemCount: widget.itemCount,
+          itemExtent: widget.itemExtent,
+          keyboardDismissBehavior: widget.keyboardDismissBehavior,
+          padding: widget.padding,
+          physics: widget.physics,
+          primary: widget.primary,
+          prototypeItem: widget.prototypeItem,
+          restorationId: widget.restorationId,
+          reverse: widget.reverse,
+          scrollDirection: widget.scrollDirection,
+          semanticChildCount: widget.semanticChildCount,
+          shrinkWrap: widget.shrinkWrap,
         ),
       ),
     );
