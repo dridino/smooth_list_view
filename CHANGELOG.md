@@ -1,3 +1,5 @@
+# 2.0.1
+* forgot to remove `enableKeyScrolling` attribute.
 # 2.0.0
 * fixed a bug where we were not able to interact with widgets within the `SmoothListView` (e.g. buttons)
 * removed support for scrolling using arrow keys

@@ -24,7 +24,6 @@ class SmoothListView extends StatelessWidget {
   final Curve curve;
   final DragStartBehavior dragStartBehavior;
   final Duration duration;
-  final bool enableKeyScrolling;
   final double? itemExtent;
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
   final EdgeInsetsGeometry? padding;
@@ -49,7 +48,6 @@ class SmoothListView extends StatelessWidget {
     this.clipBehavior = Clip.hardEdge,
     this.curve = Curves.easeOut,
     this.dragStartBehavior = DragStartBehavior.start,
-    this.enableKeyScrolling = true,
     this.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
     this.reverse = false,
     this.scrollDirection = Axis.vertical,
@@ -84,7 +82,6 @@ class SmoothListView extends StatelessWidget {
       curve: curve,
       dragStartBehavior: dragStartBehavior,
       duration: duration,
-      enableKeyScrolling: enableKeyScrolling,
       itemExtent: itemExtent,
       keyboardDismissBehavior: keyboardDismissBehavior,
       padding: padding,
@@ -108,8 +105,7 @@ class SmoothListView extends StatelessWidget {
   ///
   /// The constructor matches the `ListView.builder()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation, `enableKeyScrolling` to enable scroll while pressing
-  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
+  /// the animation, `shouldScroll` used to decide wether this `ListView`
   /// should be scrollable or not and `smoothScroll`.
   ///
   /// If `smoothScroll` is set, it will be used to determine wether the list
@@ -125,7 +121,6 @@ class SmoothListView extends StatelessWidget {
     Clip clipBehavior = Clip.hardEdge,
     Curve curve = Curves.easeOut,
     DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    bool enableKeyScrolling = true,
     ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
         ScrollViewKeyboardDismissBehavior.manual,
     bool reverse = false,
@@ -160,7 +155,6 @@ class SmoothListView extends StatelessWidget {
       curve: curve,
       dragStartBehavior: dragStartBehavior,
       duration: duration,
-      enableKeyScrolling: enableKeyScrolling,
       findChildIndexCallback: findChildIndexCallback,
       itemBuilder: itemBuilder,
       itemCount: itemCount,
@@ -186,8 +180,7 @@ class SmoothListView extends StatelessWidget {
   ///
   /// The constructor matches the `ListView.separated()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation, `enableKeyScrolling` to enable scroll while pressing
-  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
+  /// the animation, `shouldScroll` used to decide wether this `ListView`
   /// should be scrollable or not and `smoothScroll`.
   ///
   /// If `smoothScroll` is set, it will be used to determine wether the list
@@ -205,7 +198,6 @@ class SmoothListView extends StatelessWidget {
     Clip clipBehavior = Clip.hardEdge,
     Curve curve = Curves.easeOut,
     DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    bool enableKeyScrolling = true,
     ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
         ScrollViewKeyboardDismissBehavior.manual,
     bool reverse = false,
@@ -239,7 +231,6 @@ class SmoothListView extends StatelessWidget {
       curve: curve,
       dragStartBehavior: dragStartBehavior,
       duration: duration,
-      enableKeyScrolling: enableKeyScrolling,
       findChildIndexCallback: findChildIndexCallback,
       itemBuilder: itemBuilder,
       itemCount: itemCount,
@@ -266,8 +257,7 @@ class SmoothListView extends StatelessWidget {
   ///
   /// The constructor matches the `ListView.custom()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
-  /// the animation, `enableKeyScrolling` to enable scroll while pressing
-  /// arrow keys, `shouldScroll` used to decide wether this `ListView`
+  /// the animation, `shouldScroll` used to decide wether this `ListView`
   /// should be scrollable or not and `smoothScroll`.
   ///
   /// If `smoothScroll` is set, it will be used to determine wether the list
@@ -280,7 +270,6 @@ class SmoothListView extends StatelessWidget {
     Clip clipBehavior = Clip.hardEdge,
     Curve curve = Curves.easeOut,
     DragStartBehavior dragStartBehavior = DragStartBehavior.start,
-    bool enableKeyScrolling = true,
     ScrollViewKeyboardDismissBehavior keyboardDismissBehavior =
         ScrollViewKeyboardDismissBehavior.manual,
     bool reverse = false,
@@ -311,7 +300,6 @@ class SmoothListView extends StatelessWidget {
       curve: curve,
       dragStartBehavior: dragStartBehavior,
       duration: duration,
-      enableKeyScrolling: enableKeyScrolling,
       itemExtent: itemExtent,
       keyboardDismissBehavior: keyboardDismissBehavior,
       padding: padding,
@@ -340,7 +328,6 @@ class _SmoothListViewBuilder extends StatefulWidget {
   final Curve curve;
   final DragStartBehavior dragStartBehavior;
   final Duration duration;
-  final bool enableKeyScrolling;
   final ChildIndexGetter? findChildIndexCallback;
   final IndexedWidgetBuilder itemBuilder;
   final int? itemCount;
@@ -368,7 +355,6 @@ class _SmoothListViewBuilder extends StatefulWidget {
     required this.curve,
     required this.dragStartBehavior,
     required this.duration,
-    required this.enableKeyScrolling,
     required this.itemBuilder,
     required this.keyboardDismissBehavior,
     required this.reverse,
@@ -501,7 +487,6 @@ class _SmoothListViewSeparated extends StatefulWidget {
   final Curve curve;
   final DragStartBehavior dragStartBehavior;
   final Duration duration;
-  final bool enableKeyScrolling;
   final ChildIndexGetter? findChildIndexCallback;
   final IndexedWidgetBuilder itemBuilder;
   final int itemCount;
@@ -530,7 +515,6 @@ class _SmoothListViewSeparated extends StatefulWidget {
     required this.curve,
     required this.dragStartBehavior,
     required this.duration,
-    required this.enableKeyScrolling,
     required this.itemBuilder,
     required this.itemCount,
     required this.keyboardDismissBehavior,
@@ -664,7 +648,6 @@ class _SmoothListViewItems extends StatefulWidget {
   final Curve curve;
   final DragStartBehavior dragStartBehavior;
   final Duration duration;
-  final bool enableKeyScrolling;
   final double? itemExtent;
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
   final String? restorationId;
@@ -690,7 +673,6 @@ class _SmoothListViewItems extends StatefulWidget {
     required this.curve,
     required this.dragStartBehavior,
     required this.duration,
-    required this.enableKeyScrolling,
     required this.keyboardDismissBehavior,
     required this.reverse,
     required this.scrollDirection,
@@ -816,7 +798,6 @@ class _SmoothListViewCustom extends StatefulWidget {
   final Curve curve;
   final DragStartBehavior dragStartBehavior;
   final Duration duration;
-  final bool enableKeyScrolling;
   final double? itemExtent;
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
   final EdgeInsetsGeometry? padding;
@@ -839,7 +820,6 @@ class _SmoothListViewCustom extends StatefulWidget {
     required this.curve,
     required this.dragStartBehavior,
     required this.duration,
-    required this.enableKeyScrolling,
     required this.keyboardDismissBehavior,
     required this.reverse,
     required this.scrollDirection,
