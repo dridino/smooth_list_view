@@ -44,13 +44,13 @@ class _MyAppState extends State<MyApp> {
                 height: constraints.maxHeight * 0.8,
                 child: SmoothListView.builder(
                   smoothScroll: smooth,
-                  duration: const Duration(milliseconds: 2000),
+                  duration: const Duration(milliseconds: 200),
                   controller: controller,
                   itemCount: 20,
                   itemBuilder: (ctx, idx) {
                     return ListTile(
                       textColor: colorList[idx % colorList.length],
-                      onTap: () => debugPrint("pressed"),
+                      onTap: () => debugPrint("pressed $idx"),
                       title: Text("$idx"),
                     );
                   },

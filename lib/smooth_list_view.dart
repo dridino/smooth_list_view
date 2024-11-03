@@ -1,14 +1,14 @@
 library smooth_list_view;
 
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import 'dart:math' as math;
 import 'dart:io' show Platform;
 
-//! TODO : shouldScroll ?
 /// Implements a smooth version of `ListView`, mainly for desktop usage.
 ///
 /// The constructor matches the `ListView`'s one, with the exact same parameters
@@ -393,7 +393,6 @@ class _SmoothListViewBuilder extends StatefulWidget {
 }
 
 class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
-  double target = 0.0;
   late _AnimationHandler animationHandler;
 
   @override
@@ -409,11 +408,8 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
       curve: widget.curve,
     );
     widget.controller.addListener(() {
-      debugPrint("controller");
-      //debugPrint("controller");
       if (!animationHandler.isAnimating ||
           animationHandler.waitingForController) {
-        //debugPrint("good");
         animationHandler.setTargetPos(widget.controller.offset);
       }
     });
@@ -445,7 +441,6 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
         widget.controller.hasClients &&
         animationHandler.targetRaw != widget.controller.offset &&
         !animationHandler.waitingForController) {
-      //debugPrint("here");
       widget.controller
           .animateTo(animationHandler.targetRaw,
               duration: widget.duration, curve: widget.curve)
@@ -457,111 +452,40 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
         !animationHandler.waitingForController) {
       animationHandler.setIsAnimating(false);
     }
-    return KeyboardListener(
-      focusNode: FocusNode(),
-      autofocus: true,
-      onKeyEvent: (event) {
-        /* if (widget.enableKeyScrolling) {
-          int factor = 0;
-          if ((event.logicalKey == LogicalKeyboardKey.arrowDown &&
-                  widget.scrollDirection == Axis.vertical) ||
-              (event.logicalKey == LogicalKeyboardKey.arrowRight &&
-                  widget.scrollDirection == Axis.horizontal)) {
-            factor = 1;
-          } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
-                  widget.scrollDirection == Axis.vertical) ||
-              (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
-                  widget.scrollDirection == Axis.horizontal)) {
-            factor = -1;
-          }
-          final double newPos = updatePos(
-            scrollController: widget.controller,
-            scrollDelta: factor * 111.0,
-            target: target,
-            compensate: false,
-          );
-          if (!widget.smoothScroll) {
-            widget.controller.jumpTo(newPos);
-          } else {
-            setState(() {
-              target = newPos;
-            });
-          }
-        } */
+    return Listener(
+      onPointerSignal: (PointerSignalEvent event) {
+        if (event is PointerScrollEvent &&
+            widget.smoothScroll &&
+            widget.shouldScroll) {
+          animationHandler.setIsAnimating(true);
+          final double newPos =
+              bound(animationHandler.targetRaw + event.scrollDelta.dy);
+          animationHandler.setTargetPos(newPos, widget.controller.offset);
+          setState(() {});
+        }
       },
-      child: Listener(
-        onPointerSignal: (PointerSignalEvent event) {
-          if (event is PointerScrollEvent && widget.smoothScroll) {
-            final double delta = widget.scrollDirection == Axis.vertical
-                ? event.delta.dy
-                : event.delta.dx;
-            final double newPos =
-                bound(animationHandler.targetRaw + event.scrollDelta.dy);
-            /* 
-            animationHandler.send(
-                NotificationType.animation,
-                delta,
-                math.min(widget.controller.position.maxScrollExtent,
-                    math.max(0.0, newPos)));
-            setState(() {
-              target = newPos;
-              i = 2;
-            }); */
-            late double dest;
-            if (widget.controller.offset + event.scrollDelta.dy <=
-                widget.controller.position.maxScrollExtent) {
-              if (widget.controller.offset + event.scrollDelta.dy >= 0) {
-                dest = (widget.controller.offset - event.scrollDelta.dy);
-              } else {
-                dest = (2 * widget.controller.offset);
-              }
-            } else {
-              dest = (widget.controller.offset -
-                  (widget.controller.position.maxScrollExtent -
-                      widget.controller.offset));
-            }
-            debugPrint(widget.controller.offset.toString());
-            debugPrint(dest.toString());
-            debugPrint(newPos.toString());
-            debugPrint("max : ${widget.controller.position.maxScrollExtent}\n");
-            // widget.controller.jumpTo(dest);
-            /* if (widget.controller.offset + event.scrollDelta.dy <=
-                    widget.controller.position.maxScrollExtent &&
-                widget.controller.offset + event.scrollDelta.dy >= 0) {
-              widget.controller
-                  .jumpTo(widget.controller.offset - event.scrollDelta.dy);
-            } */
-            // widget.controller.jumpTo(bound(widget.controller.offset - delta));
-            animationHandler.setIsAnimating(true);
-            animationHandler.setTargetPos(newPos, widget.controller.offset);
-            setState(() {});
-            //debugPrint("listener");
-            //? provider ?
-          }
-        },
-        child: ListView.builder(
-          addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-          addRepaintBoundaries: widget.addRepaintBoundaries,
-          addSemanticIndexes: widget.addSemanticIndexes,
-          cacheExtent: widget.cacheExtent,
-          clipBehavior: widget.clipBehavior,
-          controller: widget.controller,
-          dragStartBehavior: widget.dragStartBehavior,
-          findChildIndexCallback: widget.findChildIndexCallback,
-          itemBuilder: widget.itemBuilder,
-          itemCount: widget.itemCount,
-          itemExtent: widget.itemExtent,
-          keyboardDismissBehavior: widget.keyboardDismissBehavior,
-          padding: widget.padding,
-          physics: widget.physics,
-          primary: widget.primary,
-          prototypeItem: widget.prototypeItem,
-          restorationId: widget.restorationId,
-          reverse: widget.reverse,
-          scrollDirection: widget.scrollDirection,
-          semanticChildCount: widget.semanticChildCount,
-          shrinkWrap: widget.shrinkWrap,
-        ),
+      child: ListView.builder(
+        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+        addRepaintBoundaries: widget.addRepaintBoundaries,
+        addSemanticIndexes: widget.addSemanticIndexes,
+        cacheExtent: widget.cacheExtent,
+        clipBehavior: widget.clipBehavior,
+        controller: widget.controller,
+        dragStartBehavior: widget.dragStartBehavior,
+        findChildIndexCallback: widget.findChildIndexCallback,
+        itemBuilder: widget.itemBuilder,
+        itemCount: widget.itemCount,
+        itemExtent: widget.itemExtent,
+        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+        padding: widget.padding,
+        physics: widget.physics,
+        primary: widget.primary,
+        prototypeItem: widget.prototypeItem,
+        restorationId: widget.restorationId,
+        reverse: widget.reverse,
+        scrollDirection: widget.scrollDirection,
+        semanticChildCount: widget.semanticChildCount,
+        shrinkWrap: widget.shrinkWrap,
       ),
     );
   }
@@ -633,33 +557,45 @@ class _SmoothListViewSeparated extends StatefulWidget {
 }
 
 class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
-  double targetPos = 0.0;
-  bool scrollBarScroll = true;
+  late _AnimationHandler animationHandler;
 
   @override
   void initState() {
     super.initState();
+    animationHandler = _AnimationHandler(
+      targetPos: widget.controller.initialScrollOffset,
+      isAnimating: false,
+      shouldScroll: widget.shouldScroll,
+      smoothScroll: widget.smoothScroll,
+      controller: widget.controller,
+      duration: widget.duration,
+      curve: widget.curve,
+    );
     widget.controller.addListener(() {
-      if (widget.controller.offset == targetPos) {
-        scrollBarScroll = true;
-      }
-      if (!widget.smoothScroll || scrollBarScroll) {
-        targetPos = widget.controller.offset;
+      if (!animationHandler.isAnimating ||
+          animationHandler.waitingForController) {
+        animationHandler.setTargetPos(widget.controller.offset);
       }
     });
   }
 
-  void updatePos(double v) {
-    setState(() {
-      scrollBarScroll = false;
-      if (!widget.smoothScroll) {
-        targetPos = widget.controller.offset;
-      }
-    });
+  @override
+  void didUpdateWidget(covariant _SmoothListViewSeparated oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    animationHandler = _AnimationHandler(
+      targetPos: widget.controller.initialScrollOffset,
+      isAnimating: false,
+      shouldScroll: widget.shouldScroll,
+      smoothScroll: widget.smoothScroll,
+      controller: widget.controller,
+      duration: widget.duration,
+      curve: widget.curve,
+    );
   }
 
-  Widget wrapAbsorbPointer({required bool pred, required Widget child}) {
-    return pred ? AbsorbPointer(child: child) : child;
+  double bound(double val) {
+    return math.min(
+        widget.controller.position.maxScrollExtent, math.max(0.0, val));
   }
 
   @override
@@ -667,79 +603,51 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
     if (widget.shouldScroll &&
         widget.smoothScroll &&
         widget.controller.hasClients &&
-        targetPos != widget.controller.offset) {
+        animationHandler.targetRaw != widget.controller.offset &&
+        !animationHandler.waitingForController) {
       widget.controller
-          .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
+          .animateTo(animationHandler.targetRaw,
+              duration: widget.duration, curve: widget.curve)
+          .then((_) => setState(() {}));
+    } else if (widget.shouldScroll &&
+        widget.smoothScroll &&
+        widget.controller.hasClients &&
+        animationHandler.targetRaw == widget.controller.offset &&
+        !animationHandler.waitingForController) {
+      animationHandler.setIsAnimating(false);
     }
-    return KeyboardListener(
-      focusNode: FocusNode(),
-      autofocus: true,
-      onKeyEvent: (event) {
-        if (widget.enableKeyScrolling) {
-          if ((event.logicalKey == LogicalKeyboardKey.arrowDown &&
-                  widget.scrollDirection == Axis.vertical) ||
-              (event.logicalKey == LogicalKeyboardKey.arrowRight &&
-                  widget.scrollDirection == Axis.horizontal)) {
-            if (!widget.smoothScroll) {
-              widget.controller.jumpTo(math.min(
-                  widget.controller.position.maxScrollExtent,
-                  widget.controller.offset + 111.0));
-            }
-            updatePos(111.0);
-          } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
-                  widget.scrollDirection == Axis.vertical) ||
-              (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
-                  widget.scrollDirection == Axis.horizontal)) {
-            if (!widget.smoothScroll) {
-              widget.controller
-                  .jumpTo(math.max(0.0, widget.controller.offset - 111.0));
-            }
-            updatePos(-111.0);
-          }
+    return Listener(
+      onPointerSignal: (PointerSignalEvent event) {
+        if (event is PointerScrollEvent &&
+            widget.smoothScroll &&
+            widget.shouldScroll) {
+          animationHandler.setIsAnimating(true);
+          final double newPos =
+              bound(animationHandler.targetRaw + event.scrollDelta.dy);
+          animationHandler.setTargetPos(newPos, widget.controller.offset);
+          setState(() {});
         }
       },
-      child: Listener(
-        onPointerPanZoomUpdate: (event) {
-          if (widget.smoothScroll) {
-            updatePos((widget.scrollDirection == Axis.vertical
-                    ? -event.panDelta.dy
-                    : -event.panDelta.dx) *
-                2);
-          }
-        },
-        onPointerSignal: (PointerSignalEvent event) {
-          if (event is PointerScrollEvent) {
-            updatePos(event.scrollDelta.dy);
-            if (!widget.smoothScroll) {
-              widget.controller
-                  .jumpTo(widget.controller.offset + event.scrollDelta.dy);
-            }
-          }
-        },
-        child: wrapAbsorbPointer(
-          pred: widget.smoothScroll || !widget.shouldScroll,
-          child: ListView.separated(
-            addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-            addRepaintBoundaries: widget.addRepaintBoundaries,
-            addSemanticIndexes: widget.addSemanticIndexes,
-            cacheExtent: widget.cacheExtent,
-            clipBehavior: widget.clipBehavior,
-            controller: widget.controller,
-            dragStartBehavior: widget.dragStartBehavior,
-            findChildIndexCallback: widget.findChildIndexCallback,
-            itemBuilder: widget.itemBuilder,
-            itemCount: widget.itemCount,
-            keyboardDismissBehavior: widget.keyboardDismissBehavior,
-            padding: widget.padding,
-            physics: widget.physics,
-            primary: widget.primary,
-            restorationId: widget.restorationId,
-            reverse: widget.reverse,
-            scrollDirection: widget.scrollDirection,
-            separatorBuilder: widget.separatorBuilder,
-            shrinkWrap: widget.shrinkWrap,
-          ),
-        ),
+      child: ListView.separated(
+        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+        addRepaintBoundaries: widget.addRepaintBoundaries,
+        addSemanticIndexes: widget.addSemanticIndexes,
+        cacheExtent: widget.cacheExtent,
+        clipBehavior: widget.clipBehavior,
+        controller: widget.controller,
+        dragStartBehavior: widget.dragStartBehavior,
+        findChildIndexCallback: widget.findChildIndexCallback,
+        itemBuilder: widget.itemBuilder,
+        itemCount: widget.itemCount,
+        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+        padding: widget.padding,
+        physics: widget.physics,
+        primary: widget.primary,
+        restorationId: widget.restorationId,
+        reverse: widget.reverse,
+        scrollDirection: widget.scrollDirection,
+        separatorBuilder: widget.separatorBuilder,
+        shrinkWrap: widget.shrinkWrap,
       ),
     );
   }
@@ -804,37 +712,45 @@ class _SmoothListViewItems extends StatefulWidget {
 }
 
 class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
-  double targetPos = 0.0;
-
-  bool scrollBarScroll = true;
+  late _AnimationHandler animationHandler;
 
   @override
   void initState() {
     super.initState();
+    animationHandler = _AnimationHandler(
+      targetPos: widget.controller.initialScrollOffset,
+      isAnimating: false,
+      shouldScroll: widget.shouldScroll,
+      smoothScroll: widget.smoothScroll,
+      controller: widget.controller,
+      duration: widget.duration,
+      curve: widget.curve,
+    );
     widget.controller.addListener(() {
-      if (widget.controller.offset == targetPos) {
-        scrollBarScroll = true;
-      }
-      if (!widget.smoothScroll || scrollBarScroll) {
-        targetPos = widget.controller.offset;
+      if (!animationHandler.isAnimating ||
+          animationHandler.waitingForController) {
+        animationHandler.setTargetPos(widget.controller.offset);
       }
     });
   }
 
-  void updatePos(double v) {
-    setState(() {
-      scrollBarScroll = false;
-      if (v < 0) {
-        targetPos = math.max(0.0, targetPos + v);
-      } else {
-        targetPos =
-            math.min(widget.controller.position.maxScrollExtent, targetPos + v);
-      }
-    });
+  @override
+  void didUpdateWidget(covariant _SmoothListViewItems oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    animationHandler = _AnimationHandler(
+      targetPos: widget.controller.initialScrollOffset,
+      isAnimating: false,
+      shouldScroll: widget.shouldScroll,
+      smoothScroll: widget.smoothScroll,
+      controller: widget.controller,
+      duration: widget.duration,
+      curve: widget.curve,
+    );
   }
 
-  Widget wrapAbsorbPointer({required bool pred, required Widget child}) {
-    return pred ? AbsorbPointer(child: child) : child;
+  double bound(double val) {
+    return math.min(
+        widget.controller.position.maxScrollExtent, math.max(0.0, val));
   }
 
   @override
@@ -842,79 +758,51 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
     if (widget.shouldScroll &&
         widget.smoothScroll &&
         widget.controller.hasClients &&
-        targetPos != widget.controller.offset) {
+        animationHandler.targetRaw != widget.controller.offset &&
+        !animationHandler.waitingForController) {
       widget.controller
-          .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
+          .animateTo(animationHandler.targetRaw,
+              duration: widget.duration, curve: widget.curve)
+          .then((_) => setState(() {}));
+    } else if (widget.shouldScroll &&
+        widget.smoothScroll &&
+        widget.controller.hasClients &&
+        animationHandler.targetRaw == widget.controller.offset &&
+        !animationHandler.waitingForController) {
+      animationHandler.setIsAnimating(false);
     }
-    return KeyboardListener(
-      focusNode: FocusNode(),
-      autofocus: true,
-      onKeyEvent: (event) {
-        if (widget.enableKeyScrolling) {
-          if ((event.logicalKey == LogicalKeyboardKey.arrowDown &&
-                  widget.scrollDirection == Axis.vertical) ||
-              (event.logicalKey == LogicalKeyboardKey.arrowRight &&
-                  widget.scrollDirection == Axis.horizontal)) {
-            if (!widget.smoothScroll) {
-              widget.controller.jumpTo(math.min(
-                  widget.controller.position.maxScrollExtent,
-                  widget.controller.offset + 111.0));
-            }
-            updatePos(111.0);
-          } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
-                  widget.scrollDirection == Axis.vertical) ||
-              (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
-                  widget.scrollDirection == Axis.horizontal)) {
-            if (!widget.smoothScroll) {
-              widget.controller
-                  .jumpTo(math.max(0.0, widget.controller.offset - 111.0));
-            }
-            updatePos(-111.0);
-          }
+    return Listener(
+      onPointerSignal: (PointerSignalEvent event) {
+        if (event is PointerScrollEvent &&
+            widget.smoothScroll &&
+            widget.shouldScroll) {
+          animationHandler.setIsAnimating(true);
+          final double newPos =
+              bound(animationHandler.targetRaw + event.scrollDelta.dy);
+          animationHandler.setTargetPos(newPos, widget.controller.offset);
+          setState(() {});
         }
       },
-      child: Listener(
-        onPointerPanZoomUpdate: (event) {
-          if (widget.smoothScroll) {
-            updatePos((widget.scrollDirection == Axis.vertical
-                    ? -event.panDelta.dy
-                    : -event.panDelta.dx) *
-                2);
-          }
-        },
-        onPointerSignal: (PointerSignalEvent event) {
-          if (event is PointerScrollEvent) {
-            updatePos(event.scrollDelta.dy);
-            if (!widget.smoothScroll) {
-              widget.controller
-                  .jumpTo(widget.controller.offset + event.scrollDelta.dy);
-            }
-          }
-        },
-        child: wrapAbsorbPointer(
-          pred: widget.smoothScroll || !widget.shouldScroll,
-          child: ListView(
-            addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
-            addRepaintBoundaries: widget.addRepaintBoundaries,
-            addSemanticIndexes: widget.addSemanticIndexes,
-            cacheExtent: widget.cacheExtent,
-            clipBehavior: widget.clipBehavior,
-            controller: widget.controller,
-            dragStartBehavior: widget.dragStartBehavior,
-            itemExtent: widget.itemExtent,
-            keyboardDismissBehavior: widget.keyboardDismissBehavior,
-            padding: widget.padding,
-            physics: widget.physics,
-            primary: widget.primary,
-            prototypeItem: widget.prototypeItem,
-            restorationId: widget.restorationId,
-            reverse: widget.reverse,
-            scrollDirection: widget.scrollDirection,
-            semanticChildCount: widget.semanticChildCount,
-            shrinkWrap: widget.shrinkWrap,
-            children: widget.children,
-          ),
-        ),
+      child: ListView(
+        addAutomaticKeepAlives: widget.addAutomaticKeepAlives,
+        addRepaintBoundaries: widget.addRepaintBoundaries,
+        addSemanticIndexes: widget.addSemanticIndexes,
+        cacheExtent: widget.cacheExtent,
+        clipBehavior: widget.clipBehavior,
+        controller: widget.controller,
+        dragStartBehavior: widget.dragStartBehavior,
+        itemExtent: widget.itemExtent,
+        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+        padding: widget.padding,
+        physics: widget.physics,
+        primary: widget.primary,
+        prototypeItem: widget.prototypeItem,
+        restorationId: widget.restorationId,
+        reverse: widget.reverse,
+        scrollDirection: widget.scrollDirection,
+        semanticChildCount: widget.semanticChildCount,
+        shrinkWrap: widget.shrinkWrap,
+        children: widget.children,
       ),
     );
   }
@@ -973,36 +861,45 @@ class _SmoothListViewCustom extends StatefulWidget {
 }
 
 class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
-  double targetPos = 0.0;
-  bool scrollBarScroll = true;
+  late _AnimationHandler animationHandler;
 
   @override
   void initState() {
     super.initState();
+    animationHandler = _AnimationHandler(
+      targetPos: widget.controller.initialScrollOffset,
+      isAnimating: false,
+      shouldScroll: widget.shouldScroll,
+      smoothScroll: widget.smoothScroll,
+      controller: widget.controller,
+      duration: widget.duration,
+      curve: widget.curve,
+    );
     widget.controller.addListener(() {
-      if (widget.controller.offset == targetPos) {
-        scrollBarScroll = true;
-      }
-      if (!widget.smoothScroll || scrollBarScroll) {
-        targetPos = widget.controller.offset;
+      if (!animationHandler.isAnimating ||
+          animationHandler.waitingForController) {
+        animationHandler.setTargetPos(widget.controller.offset);
       }
     });
   }
 
-  void updatePos(double v) {
-    setState(() {
-      scrollBarScroll = false;
-      if (v < 0) {
-        targetPos = math.max(0.0, targetPos + v);
-      } else {
-        targetPos =
-            math.min(widget.controller.position.maxScrollExtent, targetPos + v);
-      }
-    });
+  @override
+  void didUpdateWidget(covariant _SmoothListViewCustom oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    animationHandler = _AnimationHandler(
+      targetPos: widget.controller.initialScrollOffset,
+      isAnimating: false,
+      shouldScroll: widget.shouldScroll,
+      smoothScroll: widget.smoothScroll,
+      controller: widget.controller,
+      duration: widget.duration,
+      curve: widget.curve,
+    );
   }
 
-  Widget wrapAbsorbPointer({required bool pred, required Widget child}) {
-    return pred ? AbsorbPointer(child: child) : child;
+  double bound(double val) {
+    return math.min(
+        widget.controller.position.maxScrollExtent, math.max(0.0, val));
   }
 
   @override
@@ -1010,92 +907,51 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
     if (widget.shouldScroll &&
         widget.smoothScroll &&
         widget.controller.hasClients &&
-        targetPos != widget.controller.offset) {
+        animationHandler.targetRaw != widget.controller.offset &&
+        !animationHandler.waitingForController) {
       widget.controller
-          .animateTo(targetPos, duration: widget.duration, curve: widget.curve);
+          .animateTo(animationHandler.targetRaw,
+              duration: widget.duration, curve: widget.curve)
+          .then((_) => setState(() {}));
+    } else if (widget.shouldScroll &&
+        widget.smoothScroll &&
+        widget.controller.hasClients &&
+        animationHandler.targetRaw == widget.controller.offset &&
+        !animationHandler.waitingForController) {
+      animationHandler.setIsAnimating(false);
     }
-    return KeyboardListener(
-      focusNode: FocusNode(),
-      autofocus: true,
-      onKeyEvent: (event) {
-        if (widget.enableKeyScrolling) {
-          if ((event.logicalKey == LogicalKeyboardKey.arrowDown &&
-                  widget.scrollDirection == Axis.vertical) ||
-              (event.logicalKey == LogicalKeyboardKey.arrowRight &&
-                  widget.scrollDirection == Axis.horizontal)) {
-            if (!widget.smoothScroll) {
-              widget.controller.jumpTo(math.min(
-                  widget.controller.position.maxScrollExtent,
-                  widget.controller.offset + 111.0));
-            }
-            updatePos(111.0);
-          } else if ((event.logicalKey == LogicalKeyboardKey.arrowUp &&
-                  widget.scrollDirection == Axis.vertical) ||
-              (event.logicalKey == LogicalKeyboardKey.arrowLeft &&
-                  widget.scrollDirection == Axis.horizontal)) {
-            if (!widget.smoothScroll) {
-              widget.controller
-                  .jumpTo(math.max(0.0, widget.controller.offset - 111.0));
-            }
-            updatePos(-111.0);
-          }
+    return Listener(
+      onPointerSignal: (PointerSignalEvent event) {
+        if (event is PointerScrollEvent &&
+            widget.smoothScroll &&
+            widget.shouldScroll) {
+          animationHandler.setIsAnimating(true);
+          final double newPos =
+              bound(animationHandler.targetRaw + event.scrollDelta.dy);
+          animationHandler.setTargetPos(newPos, widget.controller.offset);
+          setState(() {});
         }
       },
-      child: Listener(
-        onPointerPanZoomUpdate: (event) {
-          if (widget.smoothScroll) {
-            updatePos((widget.scrollDirection == Axis.vertical
-                    ? -event.panDelta.dy
-                    : -event.panDelta.dx) *
-                2);
-          }
-        },
-        onPointerSignal: (PointerSignalEvent event) {
-          if (event is PointerScrollEvent) {
-            updatePos(event.scrollDelta.dy);
-            if (!widget.smoothScroll) {
-              widget.controller
-                  .jumpTo(widget.controller.offset + event.scrollDelta.dy);
-            }
-          }
-        },
-        child: wrapAbsorbPointer(
-          pred: widget.smoothScroll || !widget.shouldScroll,
-          child: ListView.custom(
-            cacheExtent: widget.cacheExtent,
-            childrenDelegate: widget.childrenDelegate,
-            clipBehavior: widget.clipBehavior,
-            controller: widget.controller,
-            dragStartBehavior: widget.dragStartBehavior,
-            itemExtent: widget.itemExtent,
-            keyboardDismissBehavior: widget.keyboardDismissBehavior,
-            padding: widget.padding,
-            physics: widget.physics,
-            primary: widget.primary,
-            prototypeItem: widget.prototypeItem,
-            restorationId: widget.restorationId,
-            reverse: widget.reverse,
-            scrollDirection: widget.scrollDirection,
-            semanticChildCount: widget.semanticChildCount,
-            shrinkWrap: widget.shrinkWrap,
-          ),
-        ),
+      child: ListView.custom(
+        cacheExtent: widget.cacheExtent,
+        childrenDelegate: widget.childrenDelegate,
+        clipBehavior: widget.clipBehavior,
+        controller: widget.controller,
+        dragStartBehavior: widget.dragStartBehavior,
+        itemExtent: widget.itemExtent,
+        keyboardDismissBehavior: widget.keyboardDismissBehavior,
+        padding: widget.padding,
+        physics: widget.physics,
+        primary: widget.primary,
+        prototypeItem: widget.prototypeItem,
+        restorationId: widget.restorationId,
+        reverse: widget.reverse,
+        scrollDirection: widget.scrollDirection,
+        semanticChildCount: widget.semanticChildCount,
+        shrinkWrap: widget.shrinkWrap,
       ),
     );
   }
-}
-
-double updatePos({
-  required ScrollController scrollController,
-  required double scrollDelta,
-  required double target,
-  required bool compensate,
-}) {
-  final double newTarget = math.min(
-    scrollController.position.maxScrollExtent,
-    math.max(0.0, target + scrollDelta),
-  );
-  return newTarget;
 }
 
 class _AnimationHandler {
@@ -1109,6 +965,7 @@ class _AnimationHandler {
   double? delta;
   bool waitingForController = false;
   double targetRaw;
+  DateTime? animationStart;
 
   _AnimationHandler({
     required this.targetPos,
@@ -1126,113 +983,33 @@ class _AnimationHandler {
       delta = option;
       waitingForController = true;
       targetRaw = newPos;
+      targetPos = newPos;
     } else {
       // controller
       if (waitingForController) {
-        debugPrint("good");
         // compensate after
         waitingForController = false;
-        debugPrint("offset : ${controller.offset}");
-        debugPrint("delta : $delta");
         controller.jumpTo(delta!);
       }
+      if (!isAnimating) targetPos = newPos;
     }
-    targetPos = newPos;
   }
 
-  /// call after targetPos has been set
   void setIsAnimating(bool newIsAnimating) {
-    if (newIsAnimating) {
-      targetRaw = targetPos;
-    }
-    isAnimating = newIsAnimating;
-    /* if (!isAnimating) return;
-    debugPrint(smoothScroll.toString());
-    if (shouldScroll &&
-        smoothScroll &&
-        controller.hasClients &&
-        targetPos != controller.offset) {
-      debugPrint("here");
-      // --- here
-      // controller.jumpTo(targetPos); <-- works
-      controller.animateTo(targetPos, duration: duration, curve: curve);
-    } */
-  }
-}
-
-enum NotificationType {
-  listener,
-  controller,
-  animation,
-}
-
-enum ListState {
-  init,
-  waitingForController,
-  animating,
-}
-
-class __AnimationHandler {
-  final ScrollController controller;
-  DateTime? animationEnd;
-  ListState state = ListState.init;
-  Duration animationDuration;
-  Curve animationCurve;
-  double target;
-
-  __AnimationHandler(
-      this.controller, this.animationDuration, this.animationCurve)
-      : target = controller.initialScrollOffset;
-
-  void send(NotificationType noti, [double? scrollDelta, double? dest]) {
-    debugPrint(state.toString());
-    debugPrint(noti.toString());
-    debugPrint("");
-    switch ([state, noti]) {
-      case [ListState.init, NotificationType.listener]:
-        state = ListState.waitingForController;
-        controller.jumpTo(target - scrollDelta!);
-        target = dest!;
-        break;
-      case [ListState.init, NotificationType.controller]:
-        state = ListState.init;
-        target = controller.offset;
-        break;
-      case [ListState.init, NotificationType.animation]:
-        state = ListState.animating;
-        animationEnd = DateTime.now().add(animationDuration);
-        controller.jumpTo(target - scrollDelta!);
-        target -= scrollDelta;
-        target = dest!;
-        controller
-            .animateTo(
-              dest,
-              duration: const Duration(seconds: 2),
-              curve: animationCurve,
-            )
-            .then((_) => debugPrint("then"));
-        break;
-
-      case [ListState.waitingForController, NotificationType.controller]:
-        state = ListState.init;
-        break;
-
-      case [ListState.animating, NotificationType.listener]:
-        if (DateTime.now().isAfter(animationEnd!)) {
-          state = ListState.init;
-          send(noti, scrollDelta, dest);
+    if (!newIsAnimating) {
+      if (animationStart != null) {
+        if (animationStart!.add(duration).isAfter(DateTime.now())) {
+          return;
+        } else {
+          isAnimating = newIsAnimating;
         }
-        break;
-      case [ListState.animating, NotificationType.controller]:
-        if (DateTime.now().isAfter(animationEnd!)) {
-          state = ListState.init;
-          send(noti, scrollDelta, dest);
-        }
-        break;
-      case [ListState.animating, NotificationType.animation]:
-        state = ListState.init;
-        send(noti, scrollDelta, dest);
-        break;
+      }
+    } else {
+      animationStart = DateTime.now();
+      if (!isAnimating) {
+        targetRaw = targetPos;
+        isAnimating = newIsAnimating;
+      }
     }
   }
 }

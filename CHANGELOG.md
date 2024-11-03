@@ -1,3 +1,6 @@
+# 2.0.0
+* fixed a bug where we were not able to interact with widgets within the `SmoothListView` (e.g. buttons)
+* removed support for scrolling using arrow keys
 # 1.1.1
 * fixed a bug where the `Scrollbar` wasn't activated by default on desktop platforms and issues related to scrolling with both `Scrollbar` and mousewheel.
 # 1.1.0

@@ -14,7 +14,6 @@ A flutter plugin to implement smooth scrolling on desktop and web.
 
 - Like the standard `ListView` but better
 - Scroll smoothly no matter what platform you're using (web, desktop, mobile)
-- Scroll through `CustomListView`s using the directional keys on your keyboard
 - Support scroll switching between mouse and trackpad
 
 ## Constructors
