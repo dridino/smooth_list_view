@@ -1,43 +1,88 @@
 library smooth_list_view;
 
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:math' as math;
-import 'dart:io' show Platform;
 
-/// Implements a smooth version of `ListView`, mainly for desktop usage.
-///
-/// The constructor matches the `ListView`'s one, with the exact same parameters
-/// except for `curve` and `duration`, used to customize the animation.
 class SmoothListView extends StatelessWidget {
+  /// Same behaviour as `ListView.addAutomaticKeepAlives`
   final bool addAutomaticKeepAlives;
+
+  /// Same behaviour as `ListView.addRepaintBoundaries`
   final bool addRepaintBoundaries;
+
+  /// Same behaviour as `ListView.addSemanticIndexes`
   final bool addSemanticIndexes;
+
+  /// Same behaviour as `ListView.cacheExtent`
   final double? cacheExtent;
+
+  /// Same behaviour as `ListView.children`
   final List<Widget> children;
+
+  /// Same behaviour as `ListView.clipBehavior`
   final Clip clipBehavior;
+
+  /// Same behaviour as `ListView.controller`
   final ScrollController? controller;
+
+  /// Curve used to customize the animation
   final Curve curve;
+
+  /// Same behaviour as `ListView.dragStartBehavior`
   final DragStartBehavior dragStartBehavior;
+
+  /// Duration used to customize the animation
   final Duration duration;
+
+  /// Same behaviour as `ListView.itemExtent`
   final double? itemExtent;
+
+  /// Same behaviour as `ListView.keyboardDismissBehavior`
   final ScrollViewKeyboardDismissBehavior keyboardDismissBehavior;
+
+  /// Same behaviour as `ListView.padding`
   final EdgeInsetsGeometry? padding;
+
+  /// Same behaviour as `ListView.physics`
   final ScrollPhysics? physics;
+
+  /// Same behaviour as `ListView.primary`
   final bool? primary;
+
+  /// Same behaviour as `ListView.prototypeItem`
   final Widget? prototypeItem;
+
+  /// Same behaviour as `ListView.restorationId`
   final String? restorationId;
+
+  /// Same behaviour as `ListView.reverse`
   final bool reverse;
+
+  /// Same behaviour as `ListView.scrollDirection`
   final Axis scrollDirection;
+
+  /// Same behaviour as `ListView.semanticChildCount`
   final int? semanticChildCount;
+
+  /// Use to determine whether this `SmoothListView` should scroll or not
   final bool shouldScroll;
+
+  /// Same behaviour as `ListView.shrinkWrap`
   final bool shrinkWrap;
+
+  /// Use to determine whether this `SmoothListView` should animate the scroll or not
   final bool smoothScroll;
 
+  /// Implements a smooth version of `ListView`, for desktop usage.
+  ///
+  /// The constructor matches the `ListView`'s one, with the exact same parameters
+  /// except for `curve` and `duration`, used to customize the animation as well
+  /// as `shouldScroll` to control the behaviour of the `SmoothListView` and
+  /// `smoothScroll` that is used to determine whether the list should be
+  /// animated or not.
   const SmoothListView({
     super.key,
     required this.children,
@@ -67,8 +112,8 @@ class SmoothListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDesktop =
-        kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    final bool isDesktop = defaultTargetPlatform != TargetPlatform.android &&
+        defaultTargetPlatform != TargetPlatform.iOS;
     final bool newSmoothScroll = smoothScroll && isDesktop;
     final ScrollController newController = controller ?? ScrollController();
     final Widget child = _SmoothListViewItems(
@@ -106,11 +151,8 @@ class SmoothListView extends StatelessWidget {
   /// The constructor matches the `ListView.builder()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
   /// the animation, `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollable or not and `smoothScroll`.
-  ///
-  /// If `smoothScroll` is set, it will be used to determine wether the list
-  /// should be animated or not. Otherwise, `smoothScroll` is set to
-  /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
+  /// should be scrollable or not and `smoothScroll`, used to determine whether
+  /// the list should be animated or not.
   static Widget builder({
     Key? key,
     required Duration duration,
@@ -140,8 +182,8 @@ class SmoothListView extends StatelessWidget {
     String? restorationId,
     int? semanticChildCount,
   }) {
-    final bool isDesktop =
-        kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    final bool isDesktop = defaultTargetPlatform != TargetPlatform.android &&
+        defaultTargetPlatform != TargetPlatform.iOS;
     smoothScroll = smoothScroll && isDesktop;
     controller = controller ?? ScrollController();
     final Widget child = _SmoothListViewBuilder(
@@ -181,11 +223,8 @@ class SmoothListView extends StatelessWidget {
   /// The constructor matches the `ListView.separated()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
   /// the animation, `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollable or not and `smoothScroll`.
-  ///
-  /// If `smoothScroll` is set, it will be used to determine wether the list
-  /// should be animated or not. Otherwise, `smoothScroll` is set to
-  /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
+  /// should be scrollable or not and `smoothScroll` used to determine whether
+  /// the list should be animated or not
   static Widget separated({
     Key? key,
     required Duration duration,
@@ -216,8 +255,8 @@ class SmoothListView extends StatelessWidget {
     String? restorationId,
     int? semanticChildCount,
   }) {
-    final bool isDesktop =
-        kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    final bool isDesktop = defaultTargetPlatform != TargetPlatform.android &&
+        defaultTargetPlatform != TargetPlatform.iOS;
     smoothScroll = smoothScroll && isDesktop;
     controller = controller ?? ScrollController();
     final Widget child = _SmoothListViewSeparated(
@@ -258,11 +297,8 @@ class SmoothListView extends StatelessWidget {
   /// The constructor matches the `ListView.custom()`'s one, with the exact
   /// same parameters, except for `curve` and `duration` used to customize
   /// the animation, `shouldScroll` used to decide wether this `ListView`
-  /// should be scrollable or not and `smoothScroll`.
-  ///
-  /// If `smoothScroll` is set, it will be used to determine wether the list
-  /// should be animated or not. Otherwise, `smoothScroll` is set to
-  /// `(kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS)`
+  /// should be scrollable or not and `smoothScroll` used to determine whether
+  /// the list should be animated or not.
   static Widget custom({
     Key? key,
     required SliverChildDelegate childrenDelegate,
@@ -287,8 +323,8 @@ class SmoothListView extends StatelessWidget {
     String? restorationId,
     int? semanticChildCount,
   }) {
-    final bool isDesktop =
-        kIsWeb || Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    final bool isDesktop = defaultTargetPlatform != TargetPlatform.android &&
+        defaultTargetPlatform != TargetPlatform.iOS;
     smoothScroll = smoothScroll && isDesktop;
     controller = controller ?? ScrollController();
     final Widget child = _SmoothListViewCustom(

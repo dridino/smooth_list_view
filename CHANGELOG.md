@@ -1,3 +1,5 @@
+# 2.0.2
+* added docs and removed import of `dart:io` to be compatible with runtime WASM
 # 2.0.1
 * forgot to remove `enableKeyScrolling` attribute.
 # 2.0.0
