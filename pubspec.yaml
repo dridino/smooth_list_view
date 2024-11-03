@@ -1,6 +1,6 @@
 name: smooth_list_view
 description: ListView constructors that implement smooth scrolling when using a mouse and scrolling with arrow keys.
-version: 2.0.2
+version: 2.0.1
 repository: https://github.com/dridino/smooth_list_view
 issue_tracker: https://github.com/dridino/smooth_list_view/issues
 
@@ -15,7 +15,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
 

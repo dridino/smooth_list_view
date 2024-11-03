@@ -1,6 +1,5 @@
-# 2.0.2
-* added docs and removed import of `dart:io` to be compatible with runtime WASM
 # 2.0.1
+* added docs and removed import of `dart:io` to be compatible with runtime WASM
 * forgot to remove `enableKeyScrolling` attribute.
 # 2.0.0
 * fixed a bug where we were not able to interact with widgets within the `SmoothListView` (e.g. buttons)
