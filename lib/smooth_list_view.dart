@@ -441,7 +441,9 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
   void didUpdateWidget(covariant _SmoothListViewBuilder oldWidget) {
     super.didUpdateWidget(oldWidget);
     animationHandler = _AnimationHandler(
-      targetPos: widget.controller.initialScrollOffset,
+      targetPos: animationHandler.delta == null
+          ? widget.controller.initialScrollOffset
+          : animationHandler.targetPos,
       isAnimating: false,
       shouldScroll: widget.shouldScroll,
       smoothScroll: widget.smoothScroll,
@@ -480,8 +482,8 @@ class _SmoothListViewBuilderState extends State<_SmoothListViewBuilder> {
             widget.smoothScroll &&
             widget.shouldScroll) {
           animationHandler.setIsAnimating(true);
-          final double newPos =
-              bound(animationHandler.targetRaw + event.scrollDelta.dy);
+          final double newPos = bound(animationHandler.targetRaw +
+              (widget.reverse ? -1 : 1) * event.scrollDelta.dy);
           animationHandler.setTargetPos(newPos, widget.controller.offset);
           setState(() {});
         }
@@ -603,7 +605,9 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
   void didUpdateWidget(covariant _SmoothListViewSeparated oldWidget) {
     super.didUpdateWidget(oldWidget);
     animationHandler = _AnimationHandler(
-      targetPos: widget.controller.initialScrollOffset,
+      targetPos: animationHandler.delta == null
+          ? widget.controller.initialScrollOffset
+          : animationHandler.targetPos,
       isAnimating: false,
       shouldScroll: widget.shouldScroll,
       smoothScroll: widget.smoothScroll,
@@ -642,8 +646,8 @@ class _SmoothListViewSeparatedState extends State<_SmoothListViewSeparated> {
             widget.smoothScroll &&
             widget.shouldScroll) {
           animationHandler.setIsAnimating(true);
-          final double newPos =
-              bound(animationHandler.targetRaw + event.scrollDelta.dy);
+          final double newPos = bound(animationHandler.targetRaw +
+              (widget.reverse ? -1 : 1) * event.scrollDelta.dy);
           animationHandler.setTargetPos(newPos, widget.controller.offset);
           setState(() {});
         }
@@ -756,7 +760,9 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
   void didUpdateWidget(covariant _SmoothListViewItems oldWidget) {
     super.didUpdateWidget(oldWidget);
     animationHandler = _AnimationHandler(
-      targetPos: widget.controller.initialScrollOffset,
+      targetPos: animationHandler.delta == null
+          ? widget.controller.initialScrollOffset
+          : animationHandler.targetPos,
       isAnimating: false,
       shouldScroll: widget.shouldScroll,
       smoothScroll: widget.smoothScroll,
@@ -795,8 +801,8 @@ class _SmoothListViewItemsState extends State<_SmoothListViewItems> {
             widget.smoothScroll &&
             widget.shouldScroll) {
           animationHandler.setIsAnimating(true);
-          final double newPos =
-              bound(animationHandler.targetRaw + event.scrollDelta.dy);
+          final double newPos = bound(animationHandler.targetRaw +
+              (widget.reverse ? -1 : 1) * event.scrollDelta.dy);
           animationHandler.setTargetPos(newPos, widget.controller.offset);
           setState(() {});
         }
@@ -903,7 +909,9 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
   void didUpdateWidget(covariant _SmoothListViewCustom oldWidget) {
     super.didUpdateWidget(oldWidget);
     animationHandler = _AnimationHandler(
-      targetPos: widget.controller.initialScrollOffset,
+      targetPos: animationHandler.delta == null
+          ? widget.controller.initialScrollOffset
+          : animationHandler.targetPos,
       isAnimating: false,
       shouldScroll: widget.shouldScroll,
       smoothScroll: widget.smoothScroll,
@@ -942,8 +950,8 @@ class _SmoothListViewCustomState extends State<_SmoothListViewCustom> {
             widget.smoothScroll &&
             widget.shouldScroll) {
           animationHandler.setIsAnimating(true);
-          final double newPos =
-              bound(animationHandler.targetRaw + event.scrollDelta.dy);
+          final double newPos = bound(animationHandler.targetRaw +
+              (widget.reverse ? -1 : 1) * event.scrollDelta.dy);
           animationHandler.setTargetPos(newPos, widget.controller.offset);
           setState(() {});
         }
