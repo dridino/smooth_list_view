@@ -1,3 +1,5 @@
+# 2.0.2
+* fixed issues related to the `reverse` attribute and the list scrolling back to its controller original position when the content changed
 # 2.0.1
 * added docs and removed import of `dart:io` to be compatible with runtime WASM
 * forgot to remove `enableKeyScrolling` attribute.
